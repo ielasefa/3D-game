@@ -1,6 +1,6 @@
 NAME := cub3d
 
-SRC:= cub.c 
+SRC:= gnl/get_next_line_utils.c  gnl/get_next_line.c 
 
 CC := cc
 
