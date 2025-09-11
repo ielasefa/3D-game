@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   get_next_line.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: iel-asef <iel-asef@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: iel-asef <iel-asef@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/18 17:17:27 by iel-asef          #+#    #+#             */
-/*   Updated: 2024/12/02 18:12:44 by iel-asef         ###   ########.fr       */
+/*   Updated: 2025/09/11 21:33:27 by iel-asef         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ char	*ft_read(int fd, char *storage)
 		if (read_bytes == 0)
 			break ;
 		buffer[read_bytes] = '\0';
-		temp = ft_strjoin(storage, buffer);
+		temp = ft_strjoin_gnl(storage, buffer);
 		if (!temp)
 			return (free(buffer), free(storage), (NULL));
 		free(storage);
