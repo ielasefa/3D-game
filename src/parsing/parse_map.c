@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parse_map.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: iel-asef <iel-asef@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ahabibi- <ahabibi-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/10 20:50:45 by iel-asef          #+#    #+#             */
-/*   Updated: 2025/09/11 15:51:44 by iel-asef         ###   ########.fr       */
+/*   Updated: 2025/09/16 18:09:48 by ahabibi-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,7 +78,6 @@ void	validate_map(t_config *config)
     if (!config->map || config->map_h == 0)
         print_error(ERR_INVALID_MAP);
     
-    // Check all characters are valid
     y = 0;
     while (y < config->map_h)
     {

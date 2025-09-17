@@ -3,25 +3,28 @@
 /*                                                        :::      ::::::::   */
 /*   cub.h                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: iel-asef <iel-asef@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ahabibi- <ahabibi-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/08 11:49:59 by iel-asef          #+#    #+#             */
-/*   Updated: 2025/09/11 15:56:56 by iel-asef         ###   ########.fr       */
+/*   Updated: 2025/09/17 02:10:03 by ahabibi-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef CUB3D_H
 # define CUB3D_H
+#ifndef M_PI
+# define M_PI 3.14159265358979323846
+#endif
 
 # include <fcntl.h>
 # include <stdlib.h>
 # include <unistd.h>
 # include <stdio.h>
 # include <limits.h>
-# include <mlx.h>
 # include "get_next_line.h"
 # include "libft.h"
-
+# include "minilibx-linux/mlx.h"
+# include <math.h>
 /* ERRORS */
 # define ERR_INVALID_PATH    1
 # define ERR_INVALID_EXT     2
@@ -33,10 +36,23 @@
 # define ERR_MULTIPLAYER     8
 # define ERR_UNKNOWN         99
 
+#define TILE 8
+#define MINIMAP_OX 30
+#define MINIMAP_OY 30
+#define FOV_DEG 60
+#define RAYS 90
+#define MAX_SLICE_HEIGHT 320
+
 /* ERROR MESSAGES */
 # define INVALID_PATH        "Error\nInvalid file path"
 # define INVALID_EXT         "Error\nInvalid file extension"
 # define USAGE_ERR           "Error\nUsage: ./cub3D <file.cub>"
+// colors
+#define COLOR_WHITE   0xFFFFFF  // R=255, G=255, B=255
+#define COLOR_PINK    0xFF66B2  // R=255, G=102, B=178
+#define COLOR_BLUE    0x0000FF  // R=0,   G=0,   B=255
+#define COLOR_YELLOW  0xFFFF00  // R=255, G=255, B=0
+
 
 typedef struct s_config
 {
@@ -53,6 +69,20 @@ typedef struct s_config
     int		player_y;
     char	player_dir;
 }	t_config;
+
+typedef struct s_player {
+float x;    
+float y;     
+float angle;  
+}   t_player;
+
+typedef struct s_game{
+    void *mlx;
+    void *window;
+    // void *
+    t_player player;
+} t_game;
+void creat_window(t_game *game,t_config *config);
 
 /* PARSING FUNCTIONS */
 int		has_cub_extension(char *path);

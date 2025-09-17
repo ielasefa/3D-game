@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: iel-asef <iel-asef@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ahabibi- <ahabibi-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/08 11:50:05 by iel-asef          #+#    #+#             */
-/*   Updated: 2025/09/11 21:42:49 by iel-asef         ###   ########.fr       */
+/*   Updated: 2025/09/15 11:43:03 by ahabibi-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,7 +65,7 @@ static void	init_config(t_config *config)
 int	main(int ac, char **av)
 {
     t_config	config;
-
+    t_game      game;
     if (ac != 2)
         return (ft_putendl_fd(USAGE_ERR, 2), 1);
     
@@ -86,6 +86,6 @@ int	main(int ac, char **av)
     printf("Map validation completed!\n");
     
     print_config(&config);
-    
+    creat_window(&game,&config);
     return (0);
 }

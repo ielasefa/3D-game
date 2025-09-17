@@ -18,7 +18,9 @@ main 	:= src/main.c
 
 gnl     := gnl/get_next_line_utils.c gnl/get_next_line.c
 
-SRC    := $(srcode) $(main) $(libft) $(gnl) 
+RAYCASTING := src/raycasting/displaywindow.c
+
+SRC    := $(srcode) $(RAYCASTING) $(main) $(libft) $(gnl) 
 
 OBJS 	:= $(SRC:.c=.o)
 
