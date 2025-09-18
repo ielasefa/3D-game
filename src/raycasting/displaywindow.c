@@ -9,10 +9,7 @@ static void draw_pixel(t_game *game, int i, int j, int color)
         y = 0;
         while (y < TILE)
         {
-            mlx_pixel_put(game->mlx, game->window,
-                          i * TILE + x + MINIMAP_OX,
-                          j * TILE + y + MINIMAP_OY,
-                          color);
+            mlx_pixel_put(game->mlx, game->window, i * TILE + x + MINIMAP_OX,j * TILE + y + MINIMAP_OY,color);
             y++;
         }
         x++;
@@ -100,17 +97,11 @@ void draw_rays(t_game *game, t_config *config)
             ray_x += cosf(ray_angle) * STEP;
             ray_y += sinf(ray_angle) * STEP;
             dist += STEP;
-            mlx_pixel_put(game->mlx, game->window,
-                          (int)roundf(ray_x) + MINIMAP_OX,
-                          (int)roundf(ray_y) + MINIMAP_OY,
-                          COLOR_PINK);
+            mlx_pixel_put(game->mlx, game->window,(int)roundf(ray_x) + MINIMAP_OX,(int)roundf(ray_y) + MINIMAP_OY,COLOR_PINK);
         }
         if (hit)
         {
-            mlx_pixel_put(game->mlx, game->window,
-                          (int)roundf(ray_x) + MINIMAP_OX,
-                          (int)roundf(ray_y) + MINIMAP_OY,
-                          COLOR_BLUE);
+            mlx_pixel_put(game->mlx, game->window,(int)roundf(ray_x) + MINIMAP_OX,(int)roundf(ray_y) + MINIMAP_OY,COLOR_BLUE);
         }
         float dist_world_pixels = dist;
         if (dist_world_pixels <= 0.0001f)
@@ -123,7 +114,7 @@ void draw_rays(t_game *game, t_config *config)
         int screen_x = r * 8 + (config->map_w * TILE) + 100;
         int y;
         for (y = start; y < end; y++)
-            mlx_pixel_put(game->mlx, game->window, screen_x, y, COLOR_WHITE);
+            mlx_pixel_put(game->mlx, game->window , screen_x, y, COLOR_YELLOW);
     }
 }
 
@@ -138,7 +129,7 @@ void creat_window(t_game *game, t_config *config)
     int win_w = config->map_w * TILE + 600;
     int win_h = config->map_h * TILE + 100;
     game->mlx = mlx_init();
-    game->window = mlx_new_window(game->mlx, win_w, win_h, "MiniMap + Raycast");
+    game->window = mlx_new_window(game->mlx, win_w*1.6, win_h*2, "MiniMap + Raycast");
     init_player_from_config(game, config);
     draw_mini_and_rays(game, config);
     mlx_loop(game->mlx);
