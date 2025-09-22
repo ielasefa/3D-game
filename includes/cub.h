@@ -6,7 +6,7 @@
 /*   By: ahabibi- <ahabibi-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/08 11:49:59 by iel-asef          #+#    #+#             */
-/*   Updated: 2025/09/17 02:10:03 by ahabibi-         ###   ########.fr       */
+/*   Updated: 2025/09/21 01:31:02 by ahabibi-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,6 +42,9 @@
 #define FOV_DEG 60
 #define RAYS 90
 #define MAX_SLICE_HEIGHT 320
+#define COLOR_CEILING 0x87CEEB  // sky blue
+#define COLOR_FLOOR   0x228B22  // forest green
+#define COLOR_WALL    0xFFD700  // gold (current walls)
 
 /* ERROR MESSAGES */
 # define INVALID_PATH        "Error\nInvalid file path"
@@ -76,12 +79,15 @@ float y;
 float angle;  
 }   t_player;
 
-typedef struct s_game{
-    void *mlx;
-    void *window;
-    // void *
+typedef struct s_game {
+    void    *mlx;
+    void    *window;
+    float   win_w;
+    float   win_h;
     t_player player;
-} t_game;
+    t_config *config;
+}   t_game;
+;
 void creat_window(t_game *game,t_config *config);
 
 /* PARSING FUNCTIONS */
