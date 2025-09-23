@@ -162,8 +162,6 @@ void draw_rays(t_game *game, t_config *config)
 
 void update_display(t_game *game, t_config *config)
 {
-    // clear_screen(game);
-    // mlx_clear_window(game->mlx,game->window);
     draw_rays(game, config);
     draw_mini_map(game, config);
 }
@@ -178,8 +176,6 @@ int close_window(t_game *game)
 
 void draw_mini_and_rays(t_game *game, t_config *config)
 {
-    // clear_screen(game);
-    // mlx_clear_window(game->mlx,game->window);
     draw_rays(game, config);
     draw_mini_map(game, config);
 }

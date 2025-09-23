@@ -94,7 +94,7 @@ int key_press(int keycode, t_game *game)
         rotate_player(game, -1);
     else if (keycode == 124) // Right 
         rotate_player(game, 1);
-    else if (keycode == 53) // ESC
+    else if (keycode == 65307) // ESC
     {
         mlx_destroy_window(game->mlx, game->window);
         exit(0);
