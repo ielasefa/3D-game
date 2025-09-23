@@ -1,6 +1,6 @@
 #include "../../includes/cub.h"
 
-static void draw_pixel(t_game *game, int i, int j, int color)
+void draw_pixel(t_game *game, int i, int j, int color)
 {
     int x, y;
     x = 0;
@@ -19,7 +19,7 @@ static void draw_pixel(t_game *game, int i, int j, int color)
     }
 }
 
-static void draw_mini_map(t_game *game, t_config *config)
+void draw_mini_map(t_game *game, t_config *config)
 {
     int i = 0, j;
     while (config->map[i])
@@ -44,11 +44,11 @@ static void draw_mini_map(t_game *game, t_config *config)
             mlx_pixel_put(game->mlx, game->window, px + dx, py + dy, COLOR_PINK);
 }
 
-static int map_at(t_config *cfg, int mx, int my)
+int map_at(t_config *cfg, int mx, int my)
 {
     if (my < 0 || mx < 0)
         return '1';
-    if (my >= cfg->map_h || mx >= cfg->map_w)
+    if (my > cfg->map_h || mx > cfg->map_w)
         return '1';
     if (!cfg->map[my])
         return '1';
@@ -57,7 +57,7 @@ static int map_at(t_config *cfg, int mx, int my)
     return cfg->map[my][mx];
 }
 
-static void init_player_from_config(t_game *game, t_config *config)
+void init_player_from_config(t_game *game, t_config *config)
 {
     game->player.x = config->player_x * TILE + TILE / 2.0f;
     game->player.y = config->player_y * TILE + TILE / 2.0f;
@@ -71,7 +71,7 @@ static void init_player_from_config(t_game *game, t_config *config)
         game->player.angle = 0.0f;
 }
 
-static void clear_screen(t_game *game)
+void clear_screen(t_game *game)
 {
     for (int y = 0; y < game->win_h; y++)
     {
@@ -82,7 +82,7 @@ static void clear_screen(t_game *game)
     }
 }
 
-static void draw_vertical_strip(t_game *game, int x, int start, int end, int color, int slice_width)
+void draw_vertical_strip(t_game *game, int x, int start, int end, int color, int slice_width)
 {
     if (x < 0 || x >= game->win_w)
         return;
@@ -97,16 +97,16 @@ static void draw_vertical_strip(t_game *game, int x, int start, int end, int col
     }
 }
 
-static void draw_rays(t_game *game, t_config *config)
+void draw_rays(t_game *game, t_config *config)
 {
     int r;
     float half_fov = (FOV_DEG / 2.0f);
     float start_angle_deg = (game->player.angle * 180.0f / M_PI) - half_fov;
     float step = FOV_DEG / (float)RAYS;
 
-    int view_3d_width = game->win_w; // Use full screen width
-    int slice_width = view_3d_width / RAYS; // Calculate slice width based on full screen width
-    int view_3d_start_x = 0; // Start at the beginning of the screen
+    int view_3d_width = game->win_w;
+    int slice_width = view_3d_width / RAYS;
+    int view_3d_start_x = 0;
 
     for (r = 0; r < RAYS; r++)
     {
@@ -160,119 +160,17 @@ static void draw_rays(t_game *game, t_config *config)
     }
 }
 
-static void update_display(t_game *game, t_config *config)
+void update_display(t_game *game, t_config *config)
 {
-    clear_screen(game);
-    draw_rays(game, config); // Draw 3D view first (fullscreen)
-    draw_mini_map(game, config); // Draw minimap on top as overlay
+    // clear_screen(game);
+    // mlx_clear_window(game->mlx,game->window);
+    draw_rays(game, config);
+    draw_mini_map(game, config);
 }
 
-static int is_valid_position(t_config *config, float x, float y)
+int close_window(t_game *game)
 {
-    int map_x = (int)(x / TILE);
-    int map_y = (int)(y / TILE);
-    
-    float padding = 5.0f;
-    int map_x_left = (int)((x - padding) / TILE);
-    int map_x_right = (int)((x + padding) / TILE);
-    int map_y_top = (int)((y - padding) / TILE);
-    int map_y_bottom = (int)((y + padding) / TILE);
-    
-    return (map_at(config, map_x, map_y) != '1' &&
-            map_at(config, map_x_left, map_y) != '1' &&
-            map_at(config, map_x_right, map_y) != '1' &&
-            map_at(config, map_x, map_y_top) != '1' &&
-            map_at(config, map_x, map_y_bottom) != '1');
-}
-
-static void move_player(t_game *game, t_config *config, int direction)
-{
-    float move_speed = 3.0f;
-    float new_x = game->player.x;
-    float new_y = game->player.y;
-
-    if (direction == 'w')
-    {
-        new_x += cosf(game->player.angle) * move_speed;
-        new_y += sinf(game->player.angle) * move_speed;
-    }
-    else if (direction == 's')
-    {
-        new_x -= cosf(game->player.angle) * move_speed;
-        new_y -= sinf(game->player.angle) * move_speed;
-    }
-    else if (direction == 'a')
-    {
-        new_x += cosf(game->player.angle - M_PI / 2) * move_speed;
-        new_y += sinf(game->player.angle - M_PI / 2) * move_speed;
-    }
-    else if (direction == 'd')
-    {
-        new_x += cosf(game->player.angle + M_PI / 2) * move_speed;
-        new_y += sinf(game->player.angle + M_PI / 2) * move_speed;
-    }
-
-    if (is_valid_position(config, new_x, game->player.y))
-        game->player.x = new_x;
-    if (is_valid_position(config, game->player.x, new_y))
-        game->player.y = new_y;
-}
-
-static void rotate_player(t_game *game, int direction)
-{
-    float rotation_speed = 0.1f;
-    
-    if (direction == 1) // Right
-        game->player.angle += rotation_speed;
-    else if (direction == -1) // Left
-        game->player.angle -= rotation_speed;
-    
-    if (game->player.angle < 0)
-        game->player.angle += 2 * M_PI;
-    if (game->player.angle >= 2 * M_PI)
-        game->player.angle -= 2 * M_PI;
-}
-
-static int key_press(int keycode, t_game *game)
-{
-    t_config *config = game->config;
-    
-    switch (keycode)
-    {
-        case 13: // W key (forward)
-        case 119: // w key
-            move_player(game, config, 'w');
-            break;
-        case 0: // A key (left strafe)
-        case 97: // a key
-            move_player(game, config, 'a');
-            break;
-        case 1: // S key (backward)
-        case 115: // s key
-            move_player(game, config, 's');
-            break;
-        case 2: // D key (right strafe)
-        case 100: // d key
-            move_player(game, config, 'd');
-            break;
-        case 123: // Left arrow (rotate left)
-            rotate_player(game, -1);
-            break;
-        case 124: // Right arrow (rotate right)
-            rotate_player(game, 1);
-            break;
-        case 53: // ESC key (exit)
-            mlx_destroy_window(game->mlx, game->window);
-            exit(0);
-            break;
-    }
-    
-    update_display(game, config);
-    return (0);
-}
-
-static int close_window(t_game *game)
-{
+    mlx_clear_window(game->mlx,game->window);
     mlx_destroy_window(game->mlx, game->window);
     exit(0);
     return (0);
@@ -280,15 +178,16 @@ static int close_window(t_game *game)
 
 void draw_mini_and_rays(t_game *game, t_config *config)
 {
-    clear_screen(game);
-    draw_rays(game, config); // Draw 3D view first (fullscreen)
-    draw_mini_map(game, config); // Draw minimap on top as overlay
+    // clear_screen(game);
+    // mlx_clear_window(game->mlx,game->window);
+    draw_rays(game, config);
+    draw_mini_map(game, config);
 }
 
 void creat_window(t_game *game, t_config *config)
 {
-    game->win_w = 1200; // Standard width for better 3D experience
-    game->win_h = 800;  // Standard height for better 3D experience
+    game->win_w = 1200;
+    game->win_h = config->map_h * TILE > 600 ? config->map_h * TILE : 600;
 
     game->config = config;
 
@@ -296,12 +195,12 @@ void creat_window(t_game *game, t_config *config)
     game->window = mlx_new_window(game->mlx,
                                   game->win_w,
                                   game->win_h,
-                                  "Cub3D - WASD to move, Arrows to rotate");
+                                  "FUCKING CUB3D");
 
     init_player_from_config(game, config);
     
-    mlx_hook(game->window, 2, 1L<<0, key_press, game); // Key press
-    mlx_hook(game->window, 17, 1L<<17, close_window, game); // Window close
+    mlx_hook(game->window, 2, 1L<<0, key_press, game);
+    mlx_hook(game->window, 17, 1L<<17, close_window, game);
     
     draw_mini_and_rays(game, config);
     

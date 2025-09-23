@@ -18,7 +18,7 @@ main 	:= src/main.c
 
 gnl     := gnl/get_next_line_utils.c gnl/get_next_line.c
 
-RAYCASTING := src/raycasting/displaywindow.c
+RAYCASTING := src/raycasting/displaywindow.c src/raycasting/move_player.c
 
 SRC    := $(srcode) $(RAYCASTING) $(main) $(libft) $(gnl) 
 

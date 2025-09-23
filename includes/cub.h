@@ -6,7 +6,7 @@
 /*   By: ahabibi- <ahabibi-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/08 11:49:59 by iel-asef          #+#    #+#             */
-/*   Updated: 2025/09/21 01:31:02 by ahabibi-         ###   ########.fr       */
+/*   Updated: 2025/09/23 09:17:43 by ahabibi-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,7 +88,30 @@ typedef struct s_game {
     t_config *config;
 }   t_game;
 ;
+
+/// move player
+
+void update_display(t_game *game, t_config *config);
+void draw_mini_and_rays(t_game *game, t_config *config);
+int close_window(t_game *game);
+void update_display(t_game *game, t_config *config);
+void draw_rays(t_game *game, t_config *config);
+void draw_vertical_strip(t_game *game, int x, int start, int end, int color, int slice_width);
+void clear_screen(t_game *game);
+void init_player_from_config(t_game *game, t_config *config);
+int map_at(t_config *cfg, int mx, int my);
+void draw_mini_map(t_game *game, t_config *config);
+void draw_pixel(t_game *game, int i, int j, int color);
+
+int is_valid_position(t_config *config, float x, float y);
+void move_player(t_game *game, t_config *config, int direction);
+// int (t_config *config, float x, float y);
+void rotate_player(t_game *game, int direction);
+
+// window displays
+
 void creat_window(t_game *game,t_config *config);
+int key_press(int keycode, t_game *game);
 
 /* PARSING FUNCTIONS */
 int		has_cub_extension(char *path);
