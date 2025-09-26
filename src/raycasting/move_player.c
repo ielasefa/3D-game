@@ -71,7 +71,17 @@ void move_player(t_game *game, t_config *config, int direction)
         new_x += cosf(game->player.angle + M_PI / 2) * move_speed;
         new_y += sinf(game->player.angle + M_PI / 2) * move_speed;
     }
-
+//   else if (direction == 65361) // 
+    // {
+    //     game->player.angle += 0.1f;
+    //     // rotate_player(game, -1);
+    //     // return;
+    // }
+    // else if (direction == 65363) // Right
+    // {
+    //     // rotate_player(game, 1);
+    //     return;
+    // }
     if (is_valid_position(config, new_x, game->player.y))
         game->player.x = new_x;
     if (is_valid_position(config, game->player.x, new_y))
@@ -82,19 +92,19 @@ int key_press(int keycode, t_game *game)
 {
     t_config *config = game->config;
 
-    if (keycode == 13 || keycode == 119) // W or w
+    if (keycode == 119) // W
         move_player(game, config, 'w');
-    else if (keycode == 0 || keycode == 97) // A or a
+    else if (keycode == 97) // A
         move_player(game, config, 'a');
-    else if (keycode == 1 || keycode == 115) // S or s
+    else if (keycode == 115) // S
         move_player(game, config, 's');
-    else if (keycode == 2 || keycode == 100) // D or d
+    else if ( keycode == 100) // D
         move_player(game, config, 'd');
-    else if (keycode == 123) // Left 
+    else if (keycode == 65361) // liser
         rotate_player(game, -1);
-    else if (keycode == 124) // Right 
+    else if (keycode == 65363) //limen
         rotate_player(game, 1);
-    else if (keycode == 65307) // ESC
+    else if (keycode == 65307) // ecape
     {
         mlx_destroy_window(game->mlx, game->window);
         exit(0);
