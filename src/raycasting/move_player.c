@@ -32,7 +32,7 @@ int is_valid_position(t_config *config, float x, float y)
 
 void rotate_player(t_game *game, int direction)
 {
-    float rotation_speed = 0.1f;
+    float rotation_speed = 0.05f;
     
     if (direction == 1) // Right
         game->player.angle += rotation_speed;

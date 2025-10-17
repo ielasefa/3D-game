@@ -73,6 +73,16 @@ typedef struct s_config
     char	player_dir;
 }	t_config;
 
+typedef struct s_texture {
+    void    *img;
+    char    *addr;
+    int     width;
+    int     height;
+    int     bits_per_pixel;
+    int     line_length;
+    int     endian;
+}   t_texture;
+
 typedef struct s_player {
 float x;    
 float y;     
@@ -80,15 +90,23 @@ float angle;
 }   t_player;
 
 typedef struct s_game {
-    void    *mlx;
-    void    *window;
-    float   win_w;
-    float   win_h;
-    t_player player;
-    t_config *config;
+    void        *img;           // Image buffer pointer
+    char        *img_addr;      // Image data address
+    int         img_bpp;        // Bits per pixel
+    int         img_line_len;   // Line length in bytes
+    int         img_endian;     // Endian
+    
+    void        *mlx;
+    void        *window;
+    float       win_w;
+    float       win_h;
+    t_player    player;
+    t_config    *config;
+    t_texture   no_texture;     // North wall texture
+    t_texture   so_texture;     // South wall texture
+    t_texture   we_texture;     // West wall texture
+    t_texture   ea_texture;     // East wall texture
 }   t_game;
-;
-
 /// move player
 
 void update_display(t_game *game, t_config *config);
