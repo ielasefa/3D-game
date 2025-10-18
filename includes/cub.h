@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cub.h                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ahabibi- <ahabibi-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: iel-asef <iel-asef@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/08 11:49:59 by iel-asef          #+#    #+#             */
-/*   Updated: 2025/09/23 09:17:43 by ahabibi-         ###   ########.fr       */
+/*   Updated: 2025/10/18 02:08:25 by iel-asef         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,6 +56,7 @@
 #define COLOR_BLUE    0x0000FF  // R=0,   G=0,   B=255
 #define COLOR_YELLOW  0xFFFF00  // R=255, G=255, B=0
 
+#define SENSITIVITY 0.001f
 
 typedef struct s_config
 {
@@ -83,6 +84,15 @@ typedef struct s_texture {
     int     endian;
 }   t_texture;
 
+typedef struct s_mouse
+{
+    int x;
+    int y;
+    int prev_x;
+    int prev_y;
+    int is_pressed;
+}   t_mouse;
+
 typedef struct s_player {
 float x;    
 float y;     
@@ -102,6 +112,7 @@ typedef struct s_game {
     float       win_h;
     t_player    player;
     t_config    *config;
+    t_mouse      mouse;
     t_texture   no_texture;     // North wall texture
     t_texture   so_texture;     // South wall texture
     t_texture   we_texture;     // West wall texture
@@ -131,7 +142,7 @@ void rotate_player(t_game *game, int direction);
 void creat_window(t_game *game,t_config *config);
 int key_press(int keycode, t_game *game);
 
-/* PARSING FUNCTIONS */
+//PARSING FUNCTIONS 
 int		has_cub_extension(char *path);
 int		is_empty_line(char *line);
 int		is_player_char(char c);
@@ -142,5 +153,9 @@ int		is_map_line(char *line);
 char	**add_line_to_array(char **array, char *line);
 void	print_error(int code);
 void	validate_map(t_config *config);
+
+int	mouse_move(int x, int y, t_game *game);
+int	mouse_release(int button, int x, int y, t_game *game);
+int	mouse_press(int button, int x, int y, t_game *game);
 
 #endif

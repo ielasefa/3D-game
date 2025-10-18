@@ -3,44 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ahabibi- <ahabibi-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: iel-asef <iel-asef@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/08 11:50:05 by iel-asef          #+#    #+#             */
-/*   Updated: 2025/09/15 11:43:03 by ahabibi-         ###   ########.fr       */
+/*   Updated: 2025/10/18 02:16:29 by iel-asef         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/cub.h"
-
-static void	print_config(t_config *config)
-{
-    int	i;
-
-    printf("\n=== PARSING RESULTS ===\n");
-    printf("NO texture: %s\n", config->no_tex ? config->no_tex : "NULL");
-    printf("SO texture: %s\n", config->so_tex ? config->so_tex : "NULL");
-    printf("WE texture: %s\n", config->we_tex ? config->we_tex : "NULL");
-    printf("EA texture: %s\n", config->ea_tex ? config->ea_tex : "NULL");
-    
-    printf("Floor RGB: %d,%d,%d\n", config->floor[0], config->floor[1], config->floor[2]);
-    printf("Ceiling RGB: %d,%d,%d\n", config->ceil[0], config->ceil[1], config->ceil[2]);
-    
-    printf("Map size: %d x %d\n", config->map_w, config->map_h);
-    printf("Player position: (%d, %d) facing %c\n", 
-        config->player_x, config->player_y, config->player_dir ? config->player_dir : '?');
-    
-    printf("\nMap:\n");
-    if (config->map)
-    {
-        i = 0;
-        while (i < config->map_h)
-        {
-            printf("[%d] %s\n", i, config->map[i]);
-            i++;
-        }
-    }
-    printf("======================\n\n");
-}
+#include <string.h>
 
 static void	init_config(t_config *config)
 {
@@ -66,26 +37,18 @@ int	main(int ac, char **av)
 {
     t_config	config;
     t_game      game;
+    
+    // Clear game to avoid uninitialized fields (mouse state, textures, etc.)
+    memset(&game, 0, sizeof(game));
+  
     if (ac != 2)
         return (ft_putendl_fd(USAGE_ERR, 2), 1);
-    
     if (has_cub_extension(av[1]))
         return (1);
-
     init_config(&config);
-    
-    printf("Parsing file: %s\n", av[1]);
-    
     if (parse_file(av[1], &config))
         return (1);
-    
-    printf("Parsing completed successfully!\n");
-    
-    printf("Validating map...\n");
     validate_map(&config);
-    printf("Map validation completed!\n");
-    
-    print_config(&config);
     creat_window(&game,&config);
     return (0);
 }

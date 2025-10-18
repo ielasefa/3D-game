@@ -1,4 +1,5 @@
-#include "../../includes/cub.h"
+// Use project include path (-I./includes)
+#include "cub.h"
 
 // void draw_pixel(t_game *game, int i, int j, int color)
 // {
@@ -204,6 +205,9 @@
 // }
 
 // #include "../../includes/cub.h"
+
+#include "../includes/cub.h"
+#include <string.h>
 
 void draw_pixel(t_game *game, int i, int j, int color)
 {
@@ -507,41 +511,45 @@ void load_textures(t_game *game, t_config *config)
                                                    &game->ea_texture.endian);
 }
 
-void creat_window(t_game *game, t_config *config)
+void	creat_window(t_game *game, t_config *config)
 {
-    game->win_w = 1200;
-    game->win_h = config->map_h * TILE > 600 ? config->map_h * TILE : 600;
+	game->win_w = 1200;
+	game->win_h = (config->map_h * TILE > 600) ? config->map_h * TILE : 600;
+	game->config = config;
 
-    game->config = config;
-
-    game->mlx = mlx_init();
-    
-    // Load textures after mlx_init
+	game->mlx = mlx_init();
+	if (!game->mlx)
+		exit(EXIT_FAILURE);
     load_textures(game, config);
-    game->ea_texture.img = mlx_xpm_file_to_image(game->mlx, "/textures/east.xpm",
-                           &game->ea_texture.width,
-                           &game->ea_texture.height);
     if (!game->ea_texture.img)
-        printf("Failed to load texture: %s\n", config->ea_tex);
-    else
-        printf("Texture loaded successfully: %s (%dx%d)\n",
-            config->ea_tex, game->ea_texture.width, game->ea_texture.height);
+           printf("Failed to load texture: %s\n", config->ea_tex);
+    else {
+        printf("Texture loaded: %s (%dx%d)\n",
+               config->ea_tex,
+               game->ea_texture.width, game->ea_texture.height);
+    }
 
-    game->window = mlx_new_window(game->mlx,
-                                  game->win_w,
-                                  game->win_h,
-                                  "FUCKING CUB3D");
-    init_player_from_config(game, config);
-    // void *img = mlx_xpm_file_to_image(game->mlx, "./textures/test/east.xpm",
-    //                        &game->ea_texture.width,
-    //                        &game->ea_texture.height);
-    // mlx_put_image_to_window(game->mlx,game->window,img,10,10);
-    // printf("%s", config->ea_tex);
-    mlx_hook(game->window, 2, 1L<<0, key_press, game);
-    mlx_hook(game->window, 17, 1L<<17, close_window, game);
-    draw_mini_and_rays(game, config);
-    // mlx_put_image_to_window(game->mlx,game->window,game->ea_texture.addr,10,10);
-    // printf("Texture loaded: %s %s (Size: %dx%d)\n", config->ea_tex,game->ea_texture.addr, game->ea_texture.width, game->ea_texture.height);
-    //  draw_mini_and_rays(game, config);
-    mlx_loop(game->mlx);
+	game->window = mlx_new_window(
+		game->mlx,
+		game->win_w,
+		game->win_h,
+		"CUB3D"
+	);
+	if (!game->window)
+		exit(EXIT_FAILURE);
+	init_player_from_config(game, config);
+    game->mouse.is_pressed = 0;
+    game->mouse.prev_x = game->win_w / 2;
+    game->mouse.prev_y = game->win_h / 2;
+  
+    mlx_mouse_move(game->mlx, game->window, game->win_w / 2, game->win_h / 2);
+    mlx_hook(game->window, 4, 1L << 2, mouse_press, game);
+    mlx_hook(game->window, 5, 1L << 3, mouse_release, game);
+    mlx_hook(game->window, 6, 1L << 6, mouse_move, game);
+	mlx_hook(game->window, 2, 1L << 0, key_press, game);
+    mlx_hook(game->window, 17, 1L << 17, close_window, game);
+
+	draw_mini_and_rays(game, config);
+	mlx_loop(game->mlx);
 }
+

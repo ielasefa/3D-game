@@ -12,7 +12,7 @@ libft 	:= libft/ft_atoi.c libft/ft_putendl_fd.c libft/ft_strcmp.c libft/ft_strrc
 		   libft/ft_splitlen.c libft/ft_free_split.c
 
 srcode  := src/parsing/parse_file.c  src/parsing/parse_identifiers.c  src/parsing/parse_map.c \
-			src/parsing/parse_utils.c  src/parsing/print_error.c
+			src/parsing/parse_utils.c  src/parsing/print_error.c src/raycasting/mouse.c
 
 main 	:= src/main.c
 
