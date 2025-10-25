@@ -2,7 +2,7 @@ NAME := cub3d
 
 CC := cc
 
-CFLAGS := -Wall -Wextra -Werror -I./minilibx-linux -I./includes -I./gnl
+CFLAGS :=  -I./minilibx-linux -I./includes -I./gnl
 
 LIBXFLAGS := -L./minilibx-linux -lmlx -lXext -lX11 -lm
 
