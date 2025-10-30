@@ -3,95 +3,119 @@
 /*                                                        :::      ::::::::   */
 /*   parse_map.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ahabibi- <ahabibi-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: iel-asef <iel-asef@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/10 20:50:45 by iel-asef          #+#    #+#             */
-/*   Updated: 2025/09/16 18:09:48 by ahabibi-         ###   ########.fr       */
+/*   Updated: 2025/10/30 01:55:32 by iel-asef         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/cub.h"
 
-static void	find_player(t_config *config)
+static int is_valid_map_char(char c)
 {
-    int	y;
-    int	x;
-    int	player_count;
+    return (c == '0' || c == '1' || c == 'N' || c == 'S' ||
+            c == 'E' || c == 'W' || c == ' ');
+}
 
-    player_count = 0;
-    y = 0;
-    while (y < config->map_h)
+static int get_height(char **map)
+{
+    int h = 0;
+    while (map && map[h])
+        h++;
+    return h;
+}
+
+static int get_max_width(char **map)
+{
+    int i = 0, maxw = 0;
+    while (map && map[i])
     {
-        x = 0;
-        while (config->map[y] && config->map[y][x])
-        {
-            if (is_player_char(config->map[y][x]))
-            {
-                config->player_x = x;
-                config->player_y = y;
-                config->player_dir = config->map[y][x];
-                player_count++;
-            }
-            x++;
-        }
-        y++;
+        int len = (int)ft_strlen(map[i]);
+        if (len > maxw)
+            maxw = len;
+        i++;
     }
-    if (player_count == 0)
+    return maxw;
+}
+
+// helper: rje3 char f (i,j) w ila kharjna 3la l-hd rje3 ' ' (kconsiderih barra)
+static char char_at(t_config *cfg, int i, int j)
+{
+    if (i < 0 || i >= cfg->map_h)
+        return ' ';
+    int len = (int)ft_strlen(cfg->map[i]);
+    if (j < 0 || j >= len)
+        return ' ';
+    return cfg->map[i][j];
+}
+
+static void find_player(t_config *cfg)
+{
+    int i, j, count = 0;
+
+    for (i = 0; i < cfg->map_h; i++)
+    {
+        int len = (int)ft_strlen(cfg->map[i]);
+        for (j = 0; j < len; j++)
+        {
+            char c = cfg->map[i][j];
+            if (is_player_char(c))
+            {
+                cfg->player_x = j;
+                cfg->player_y = i;
+                cfg->player_dir = c;
+                count++;
+            }
+        }
+    }
+    if (count == 0)
         print_error(ERR_NO_PLAYER);
-    if (player_count > 1)
+    if (count > 1)
         print_error(ERR_MULTIPLAYER);
 }
 
-static int	is_valid_map_char(char c)
+// ay '0' wla player lms li lfo9/lt7t/lymin/lysar b ' ' (wla kharj 3la l-hd) => map m7llla
+static void ensure_closed(t_config *cfg)
 {
-    return (c == '0' || c == '1' || c == ' ' || is_player_char(c));
-}
+    int i, j;
 
-static void	validate_map_borders(t_config *config)
-{
-    int	y;
-    int	x;
-
-    // Check first and last row
-    y = 0;
-    while (y < config->map_h)
+    for (i = 0; i < cfg->map_h; i++)
     {
-        if (y == 0 || y == config->map_h - 1)
+        int len = (int)ft_strlen(cfg->map[i]);
+        for (j = 0; j < len; j++)
         {
-            x = 0;
-            while (config->map[y][x])
+            char c = cfg->map[i][j];
+            if (c == '0' || is_player_char(c))
             {
-                if (config->map[y][x] != '1' && config->map[y][x] != ' ')
+                if (char_at(cfg, i-1, j) == ' ' ||
+                    char_at(cfg, i+1, j) == ' ' ||
+                    char_at(cfg, i, j-1) == ' ' ||
+                    char_at(cfg, i, j+1) == ' ')
                     print_error(ERR_INVALID_MAP);
-                x++;
             }
         }
-        y++;
     }
 }
 
-void	validate_map(t_config *config)
+void validate_map(t_config *config)
 {
-    int	y;
-    int	x;
+    int i, j;
 
-    if (!config->map || config->map_h == 0)
+    if (!config->map || !config->map[0])
         print_error(ERR_INVALID_MAP);
-    
-    y = 0;
-    while (y < config->map_h)
-    {
-        x = 0;
-        while (config->map[y][x])
-        {
-            if (!is_valid_map_char(config->map[y][x]))
+
+    // chars valides
+    for (i = 0; config->map[i]; i++)
+        for (j = 0; config->map[i][j]; j++)
+            if (!is_valid_map_char(config->map[i][j]))
                 print_error(ERR_INVALID_MAP);
-            x++;
-        }
-        y++;
-    }
-    
+
+    // ma kan-zid walo: ma kayn ta normalization/padding
+    config->map_h = get_height(config->map);
+    config->map_w = get_max_width(config->map);
+
     find_player(config);
-    validate_map_borders(config);
+    ensure_closed(config);
 }
 

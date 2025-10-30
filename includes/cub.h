@@ -6,7 +6,7 @@
 /*   By: iel-asef <iel-asef@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/08 11:49:59 by iel-asef          #+#    #+#             */
-/*   Updated: 2025/10/18 02:08:25 by iel-asef         ###   ########.fr       */
+/*   Updated: 2025/10/30 01:31:06 by iel-asef         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -141,6 +141,9 @@ void rotate_player(t_game *game, int direction);
 
 void creat_window(t_game *game,t_config *config);
 int key_press(int keycode, t_game *game);
+int mouse_press(int button, int x, int y, t_game *game);
+int mouse_release(int button, int x, int y, t_game *game);
+int mouse_move(int x, int y, t_game *game);
 
 //PARSING FUNCTIONS 
 int		has_cub_extension(char *path);
@@ -153,9 +156,5 @@ int		is_map_line(char *line);
 char	**add_line_to_array(char **array, char *line);
 void	print_error(int code);
 void	validate_map(t_config *config);
-
-int	mouse_move(int x, int y, t_game *game);
-int	mouse_release(int button, int x, int y, t_game *game);
-int	mouse_press(int button, int x, int y, t_game *game);
 
 #endif

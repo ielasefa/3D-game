@@ -6,7 +6,7 @@
 /*   By: iel-asef <iel-asef@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/08 11:50:13 by iel-asef          #+#    #+#             */
-/*   Updated: 2025/09/11 15:55:49 by iel-asef         ###   ########.fr       */
+/*   Updated: 2025/10/30 01:30:42 by iel-asef         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,11 +33,6 @@ int	is_empty_line(char *line)
     while (line[i] && (line[i] == ' ' || line[i] == '\t'))
         i++;
     return (line[i] == '\n' || line[i] == '\0');
-}
-
-int	is_player_char(char c)
-{
-    return (c == 'N' || c == 'S' || c == 'E' || c == 'W');
 }
 
 static char	*trim_line(char *line)

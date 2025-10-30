@@ -6,27 +6,78 @@
 /*   By: iel-asef <iel-asef@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/10 20:12:21 by iel-asef          #+#    #+#             */
-/*   Updated: 2025/09/11 15:55:57 by iel-asef         ###   ########.fr       */
+/*   Updated: 2025/10/30 00:32:51 by iel-asef         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/cub.h"
 
+static int has_double_comma(const char *str)
+{
+    int i;
+
+    i = 0;
+    while (str[i] && str[i + 1])
+    {
+        if (str[i] == ',' && str[i + 1] == ',')
+            return (1);
+        i++;
+    }
+    return (0);
+}
+
+static int is_valid_number(char *str)
+{
+    int i;
+
+    i = 0;
+    while (str[i])
+    {
+        if (str[i] != ' ' && str[i] != '\t' && !ft_isdigit(str[i]))
+            return (0);
+        i++;
+    }
+    return (1);
+}
+
 void	parse_rgb(int color[3], char *s)
 {
     char	**split;
     int		i;
+    
+    while (*s && (*s == ' ' || *s == '\t'))
+        s++;
+        
+    if (!s || *s == ',' || s[ft_strlen(s) - 1] == ',')
+        print_error(ERR_INVALID_RGB);
+
+    if (has_double_comma(s))
+        print_error(ERR_INVALID_RGB);
 
     split = ft_split(s, ',');
     if (!split || ft_splitlen(split) != 3)
-        print_error(ERR_INVALID_RGB);
-    i = 0;
-    while (i < 3)
     {
-        color[i] = ft_atoi(split[i]);
-        if (color[i] < 0 || color[i] > 255)
+        ft_free_split(split);
+        print_error(ERR_INVALID_RGB);
+    }
+
+    i = -1;
+    while (++i < 3)
+    {
+        char *trimmed = ft_strtrim(split[i], " \t");
+        if (!trimmed || !*trimmed || !is_valid_number(trimmed))
+        {
+            ft_free_split(split);
+            free(trimmed);
             print_error(ERR_INVALID_RGB);
-        i++;
+        }
+        color[i] = ft_atoi(trimmed);
+        free(trimmed);
+        if (color[i] < 0 || color[i] > 255)
+        {
+            ft_free_split(split);
+            print_error(ERR_INVALID_RGB);
+        }
     }
     ft_free_split(split);
 }

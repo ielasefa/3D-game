@@ -6,7 +6,7 @@
 /*   By: iel-asef <iel-asef@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/11 16:00:00 by iel-asef          #+#    #+#             */
-/*   Updated: 2025/09/11 21:42:09 by iel-asef         ###   ########.fr       */
+/*   Updated: 2025/10/30 00:47:01 by iel-asef         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,5 +31,6 @@ int		ft_strncmp(const char *s1, const char *s2, size_t n);
 char	*ft_strtrim(char const *s1, char const *set);
 int		ft_splitlen(char **split);
 void	ft_free_split(char **split);
+int		ft_isdigit(int c);
 
 #endif

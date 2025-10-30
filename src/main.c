@@ -6,7 +6,7 @@
 /*   By: iel-asef <iel-asef@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/08 11:50:05 by iel-asef          #+#    #+#             */
-/*   Updated: 2025/10/18 02:16:29 by iel-asef         ###   ########.fr       */
+/*   Updated: 2025/10/30 01:05:18 by iel-asef         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,9 +36,10 @@ static void	init_config(t_config *config)
 int	main(int ac, char **av)
 {
     t_config	config;
-    t_game      game;
-    
-    // Clear game to avoid uninitialized fields (mouse state, textures, etc.)
+    t_game	game;
+
+    // Clear game to avoid uninitialized fields
+    memset(&config, 0, sizeof(config));
     memset(&game, 0, sizeof(game));
   
     if (ac != 2)
@@ -49,6 +50,6 @@ int	main(int ac, char **av)
     if (parse_file(av[1], &config))
         return (1);
     validate_map(&config);
-    creat_window(&game,&config);
+    creat_window(&game, &config); // Fixed: Pass both game and config
     return (0);
 }
