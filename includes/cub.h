@@ -6,7 +6,7 @@
 /*   By: iel-asef <iel-asef@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/08 11:49:59 by iel-asef          #+#    #+#             */
-/*   Updated: 2025/10/30 01:31:06 by iel-asef         ###   ########.fr       */
+/*   Updated: 2025/10/30 02:45:04 by iel-asef         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,14 @@
 # define ERR_NO_PLAYER       7
 # define ERR_MULTIPLAYER     8
 # define ERR_UNKNOWN         99
+
+#ifndef ERR_INVALID_PATH
+# define ERR_INVALID_PATH 4
+#endif
+
+#ifndef ERR_INVALID_EXT
+# define ERR_INVALID_EXT 5
+#endif
 
 #define TILE 8
 #define MINIMAP_OX 30
@@ -155,6 +163,7 @@ void	parse_identifier(t_config *cfg, char *line);
 int		is_map_line(char *line);
 char	**add_line_to_array(char **array, char *line);
 void	print_error(int code);
+void	print_error_path(int code, const char *detail);
 void	validate_map(t_config *config);
 
 #endif

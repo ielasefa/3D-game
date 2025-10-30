@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   validate_map.c                                     :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: iel-asef <iel-asef@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/10/30 02:13:37 by iel-asef          #+#    #+#             */
+/*   Updated: 2025/10/30 02:13:40 by iel-asef         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../../includes/cub.h"
 
 static int is_valid_char(char c)
@@ -8,7 +20,6 @@ static int is_valid_char(char c)
 
 static int is_surrounded_by_walls(char **map, int i, int j)
 {
-    // Check all 8 surrounding positions
     if (i > 0 && j > 0 && map[i][j] != '1')
     {
         if (map[i-1][j] == ' ' || map[i+1][j] == ' ' || 

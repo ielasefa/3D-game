@@ -6,7 +6,7 @@
 /*   By: iel-asef <iel-asef@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/10 20:50:45 by iel-asef          #+#    #+#             */
-/*   Updated: 2025/10/30 01:55:32 by iel-asef         ###   ########.fr       */
+/*   Updated: 2025/10/30 03:01:22 by iel-asef         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,6 @@ static int get_max_width(char **map)
     return maxw;
 }
 
-// helper: rje3 char f (i,j) w ila kharjna 3la l-hd rje3 ' ' (kconsiderih barra)
 static char char_at(t_config *cfg, int i, int j)
 {
     if (i < 0 || i >= cfg->map_h)
@@ -52,12 +51,17 @@ static char char_at(t_config *cfg, int i, int j)
 
 static void find_player(t_config *cfg)
 {
-    int i, j, count = 0;
+    int i;
+    int j;
+    int count;
 
-    for (i = 0; i < cfg->map_h; i++)
+    i = 0;
+    count = 0;
+    while (i < cfg->map_h)
     {
         int len = (int)ft_strlen(cfg->map[i]);
-        for (j = 0; j < len; j++)
+        j = 0;
+        while (j < len)
         {
             char c = cfg->map[i][j];
             if (is_player_char(c))
@@ -67,7 +71,9 @@ static void find_player(t_config *cfg)
                 cfg->player_dir = c;
                 count++;
             }
+            j++;
         }
+        i++;
     }
     if (count == 0)
         print_error(ERR_NO_PLAYER);
@@ -75,47 +81,57 @@ static void find_player(t_config *cfg)
         print_error(ERR_MULTIPLAYER);
 }
 
-// ay '0' wla player lms li lfo9/lt7t/lymin/lysar b ' ' (wla kharj 3la l-hd) => map m7llla
 static void ensure_closed(t_config *cfg)
 {
-    int i, j;
+    int i;
+    int j;
 
-    for (i = 0; i < cfg->map_h; i++)
+    i = 0;
+    while (i < cfg->map_h)
     {
         int len = (int)ft_strlen(cfg->map[i]);
-        for (j = 0; j < len; j++)
+        j = 0;
+        while (j < len)
         {
             char c = cfg->map[i][j];
             if (c == '0' || is_player_char(c))
             {
-                if (char_at(cfg, i-1, j) == ' ' ||
-                    char_at(cfg, i+1, j) == ' ' ||
-                    char_at(cfg, i, j-1) == ' ' ||
-                    char_at(cfg, i, j+1) == ' ')
+                if (char_at(cfg, i - 1, j) == ' ' ||
+                    char_at(cfg, i + 1, j) == ' ' ||
+                    char_at(cfg, i, j - 1) == ' ' ||
+                    char_at(cfg, i, j + 1) == ' ')
                     print_error(ERR_INVALID_MAP);
             }
+            j++;
         }
+        i++;
     }
 }
 
 void validate_map(t_config *config)
 {
-    int i, j;
+    int i;
+    int j;
 
     if (!config->map || !config->map[0])
         print_error(ERR_INVALID_MAP);
 
-    // chars valides
-    for (i = 0; config->map[i]; i++)
-        for (j = 0; config->map[i][j]; j++)
+    i = 0;
+    while (config->map[i])
+    {
+        j = 0;
+        while (config->map[i][j])
+        {
             if (!is_valid_map_char(config->map[i][j]))
                 print_error(ERR_INVALID_MAP);
+            j++;
+        }
+        i++;
+    }
 
-    // ma kan-zid walo: ma kayn ta normalization/padding
     config->map_h = get_height(config->map);
     config->map_w = get_max_width(config->map);
 
     find_player(config);
     ensure_closed(config);
 }
-

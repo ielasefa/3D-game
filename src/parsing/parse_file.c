@@ -6,7 +6,7 @@
 /*   By: iel-asef <iel-asef@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/08 11:50:13 by iel-asef          #+#    #+#             */
-/*   Updated: 2025/10/30 01:30:42 by iel-asef         ###   ########.fr       */
+/*   Updated: 2025/10/30 02:14:07 by iel-asef         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,6 @@ int	parse_file(char *filename, t_config *config)
     fd = open(filename, O_RDONLY);
     if (fd < 0)
         return (print_error(ERR_INVALID_PATH), 1);
-    // Initialize config
     config->map = NULL;
     config->map_h = 0;
     config->map_w = 0;
