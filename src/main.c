@@ -26,7 +26,7 @@ static void	init_config(t_config *config)
     config->ceil[1] = -1;
     config->ceil[2] = -1;
     config->map = NULL;
-    config->map_h = 0;
+    config->map_h = 0;  
     config->map_w = 0;
     config->player_x = -1;
     config->player_y = -1;

@@ -1,21 +1,9 @@
-
 #include "../includes/cub.h"
 #include <string.h>
 
 static int rgb_to_int(int rgb[3])
 {
     return (rgb[0] << 16) | (rgb[1] << 8) | rgb[2];
-}
-
-static void put_pixel_to_image(t_game *game, int x, int y, int color)
-{
-    char *dst;
-    
-    if (x < 0 || x >= game->win_w || y < 0 || y >= game->win_h)
-        return;
-    
-    dst = game->img_addr + (y * game->img_line_len + x * (game->img_bpp / 8));
-    *(unsigned int*)dst = color;
 }
 
 void draw_pixel(t_game *game, int i, int j, int color)
@@ -27,7 +15,7 @@ void draw_pixel(t_game *game, int i, int j, int color)
         y = 0;
         while (y < TILE)
         {
-            put_pixel_to_image(game,
+            mlx_pixel_put(game->mlx, game->window,
                           i * TILE + x + MINIMAP_OX,
                           j * TILE + y + MINIMAP_OY,
                           color);
@@ -59,7 +47,7 @@ void draw_mini_map(t_game *game, t_config *config)
     int py = p_my + MINIMAP_OY;
     for (int dy = -1; dy <= 1; dy++)
         for (int dx = -1; dx <= 1; dx++)
-            put_pixel_to_image(game, px + dx, py + dy, COLOR_PINK);
+            mlx_pixel_put(game->mlx, game->window, px + dx, py + dy, COLOR_PINK);
 }
 
 int map_at(t_config *cfg, int mx, int my)
@@ -131,7 +119,7 @@ void draw_textured_vertical_strip(t_game *game, int x, int start, int end,
                 if (tex_y >= tex->height) tex_y = tex->height - 1;
                 
                 int color = get_texture_pixel(tex, tex_x, tex_y);
-                put_pixel_to_image(game, x + dx, y, color);
+                mlx_pixel_put(game->mlx, game->window, x + dx, y, color);
                 
                 current_tex_pos += step;
             }
@@ -149,7 +137,7 @@ void draw_vertical_strip(t_game *game, int x, int start, int end, int color, int
         for (int y = start; y < end; y++)
         {
             if (y >= 0 && y < game->win_h)
-                put_pixel_to_image(game, x + dx, y, color);
+                mlx_pixel_put(game->mlx, game->window, x + dx, y, color);
         }
     }
 }
@@ -302,8 +290,8 @@ void draw_column(t_game *game, t_config *config, t_dda *dda, int x)
     {
         tex_x = (int)(wall_x * wall_tex->width);
         
-    if ((dda->wall_side == 0 && dda->ray_dir_x < 0) || 
-        (dda->wall_side == 1 && dda->ray_dir_y > 0))
+        if ((dda->wall_side == 0 && dda->ray_dir_x > 0) || 
+            (dda->wall_side == 1 && dda->ray_dir_y < 0))
         {
             tex_x = wall_tex->width - tex_x - 1;
         }
@@ -339,7 +327,6 @@ void update_display(t_game *game, t_config *config)
 {
     draw_rays(game, config);
     draw_mini_map(game, config);
-    mlx_put_image_to_window(game->mlx, game->window, game->img, 0, 0);
 }
 
 int close_window(t_game *game)
@@ -354,7 +341,6 @@ void draw_mini_and_rays(t_game *game, t_config *config)
 {
     draw_rays(game, config);
     draw_mini_map(game, config);
-    mlx_put_image_to_window(game->mlx, game->window, game->img, 0, 0);
 }
 
 void load_textures(t_game *game, t_config *config)
@@ -411,14 +397,6 @@ void creat_window(t_game *game, t_config *config)
     game->mlx = mlx_init();
     if (!game->mlx)
         exit(EXIT_FAILURE);
-    
-    // Create image buffer for fast rendering
-    game->img = mlx_new_image(game->mlx, game->win_w, game->win_h);
-    if (!game->img)
-        exit(EXIT_FAILURE);
-    
-    game->img_addr = mlx_get_data_addr(game->img, &game->img_bpp,
-                                       &game->img_line_len, &game->img_endian);
     
     load_textures(game, config);
     printf("%s\n", config->no_tex);

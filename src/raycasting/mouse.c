@@ -45,9 +45,9 @@ int	mouse_move(int x, int y, t_game *game)
 	{
 		game->player.angle += delta_x * SENSITIVITY;
 		while (game->player.angle < 0)
-			game->player.angle += 2 * M_PI;
+			game->player.angle += 2 * M_PI / 360.0f;
 		while (game->player.angle >= 2 * M_PI)
-			game->player.angle -= 2 * M_PI;
+			game->player.angle -= 2 * M_PI / 360.0f;
 		mlx_mouse_move(game->mlx, game->window, center_x, center_y);
 		draw_mini_and_rays(game, game->config);
 	}
