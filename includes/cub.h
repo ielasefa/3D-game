@@ -6,7 +6,7 @@
 /*   By: iel-asef <iel-asef@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/08 11:49:59 by iel-asef          #+#    #+#             */
-/*   Updated: 2025/10/18 02:08:25 by iel-asef         ###   ########.fr       */
+/*   Updated: 2025/11/07 00:43:31 by iel-asef         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@
 # include "libft.h"
 # include "minilibx-linux/mlx.h"
 # include <math.h>
-/* ERRORS */
+
 # define ERR_INVALID_PATH    1
 # define ERR_INVALID_EXT     2
 # define ERR_INVALID_RGB     3
@@ -46,7 +46,6 @@
 #define COLOR_FLOOR   0x228B22  // forest green
 #define COLOR_WALL    0xFFD700  // gold (current walls)
 
-/* ERROR MESSAGES */
 # define INVALID_PATH        "Error\nInvalid file path"
 # define INVALID_EXT         "Error\nInvalid file extension"
 # define USAGE_ERR           "Error\nUsage: ./cub3D <file.cub>"
@@ -56,7 +55,7 @@
 #define COLOR_BLUE    0x0000FF  // R=0,   G=0,   B=255
 #define COLOR_YELLOW  0xFFFF00  // R=255, G=255, B=0
 
-#define SENSITIVITY 0.001f
+#define SENSITIVITY 0.004f
 
 typedef struct s_dda {
     float   pos_x;
@@ -89,11 +88,13 @@ typedef struct s_config
     int		floor[3];
     int		ceil[3];
     char	**map;
+    char    **original_map; /* added: copy of parsed map to know original doors */
     int		map_h;
     int		map_w;
     int		player_x;
     int		player_y;
     char	player_dir;
+    char    *door_tex;    /* path for door texture (DO) */
 }	t_config;
 
 typedef struct s_texture {
@@ -105,6 +106,34 @@ typedef struct s_texture {
     int     line_length;
     int     endian;
 }   t_texture;
+
+/* doors state */
+typedef struct s_door
+{
+    int	x;
+    int	y;
+    int	open;  /* أضف هنا */
+}	t_door;
+
+typedef struct s_doors
+{
+    t_door	*data;
+    int		count;
+    int		capacity;
+}	t_doors;
+
+/* doors (bonus) prototypes */
+int		was_door_before(int x, int y, char **original_map);
+void	toggle_door(char **map, char **original_map,
+            double player_x, double player_y, double dir_x, double dir_y);
+int		pos_is_door(char **map, double px, double py);
+
+/* doors state helpers */
+void	doors_init(t_doors *doors);
+void	doors_free(t_doors *doors);
+int		doors_add(t_doors *doors, int x, int y);
+int		doors_remove(t_doors *doors, int x, int y);
+int		doors_is_saved(t_doors *doors, int x, int y);
 
 typedef struct s_mouse
 {
@@ -121,31 +150,32 @@ float y;
 float angle;  
 }   t_player;
 
-typedef struct s_game {
+typedef struct s_game
+{
     void        *img;           // Image buffer pointer
     char        *img_addr;      // Image data address
     int         img_bpp;        // Bits per pixel
     int         img_line_len;   // Line length in bytes
     int         img_endian;     // Endian
-    
+
     void        *mlx;
     void        *window;
-    float       win_w;
-    float       win_h;
+    int         win_w;          /* changed from float to int */
+    int         win_h;          /* changed from float to int */
+    t_doors     doors;          /* changed: use t_doors (state) */
     t_player    player;
     t_config    *config;
-    t_mouse      mouse;
+    t_mouse     mouse;
     t_texture   no_texture;     // North wall texture
     t_texture   so_texture;     // South wall texture
     t_texture   we_texture;     // West wall texture
     t_texture   ea_texture;     // East wall texture
+    t_texture   door_texture; /* <--- added: door texture */
 }   t_game;
 /// move player
 
 void update_display(t_game *game, t_config *config);
 void draw_mini_and_rays(t_game *game, t_config *config);
-int close_window(t_game *game);
-void update_display(t_game *game, t_config *config);
 void draw_rays(t_game *game, t_config *config);
 void draw_vertical_strip(t_game *game, int x, int start, int end, int color, int slice_width);
 void clear_screen(t_game *game);
@@ -172,7 +202,7 @@ int		parse_file(char *filename, t_config *config);
 void	parse_rgb(int color[3], char *s);
 void	parse_identifier(t_config *cfg, char *line);
 int		is_map_line(char *line);
-char	**add_line_to_array(char **array, char *line);
+char	**add_line_to_array(char **array, const char *line);
 void	print_error(int code);
 void	validate_map(t_config *config);
 
@@ -180,4 +210,14 @@ int	mouse_move(int x, int y, t_game *game);
 int	mouse_release(int button, int x, int y, t_game *game);
 int	mouse_press(int button, int x, int y, t_game *game);
 
+int ft_isdigit(int c);
+void    print_error_path(int code, const char *detail);
+void	free_split_safe(char **arr);
+void creat_window(t_game *game, t_config *config);
+
+/* helpers */
+
+int was_door_before(int x, int y, char **original_map);
+void free_config(t_config *config);
+char **duplicate_map(char **map); /* add prototype to duplicate parsed map */
 #endif

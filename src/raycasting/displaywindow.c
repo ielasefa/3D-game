@@ -1,6 +1,9 @@
-
-#include "../includes/cub.h"
+#include "../../includes/cub.h"
+#include <math.h>
+#include <stdio.h>
 #include <string.h>
+
+/* ---------- HELPERS ---------- */
 
 static int rgb_to_int(int rgb[3])
 {
@@ -9,191 +12,100 @@ static int rgb_to_int(int rgb[3])
 
 static void put_pixel_to_image(t_game *game, int x, int y, int color)
 {
-    char *dst;
-    
     if (x < 0 || x >= game->win_w || y < 0 || y >= game->win_h)
         return;
-    
-    dst = game->img_addr + (y * game->img_line_len + x * (game->img_bpp / 8));
-    *(unsigned int*)dst = color;
+    char *dst = game->img_addr + (y * game->img_line_len + x * (game->img_bpp / 8));
+    *(unsigned int *)dst = color;
 }
+
+/* ---------- MINIMAP ---------- */
 
 void draw_pixel(t_game *game, int i, int j, int color)
 {
-    int x, y;
-    x = 0;
-    while (x < TILE)
+    for (int x = 0; x < TILE; x++)
     {
-        y = 0;
-        while (y < TILE)
+        for (int y = 0; y < TILE; y++)
         {
             put_pixel_to_image(game,
-                          i * TILE + x + MINIMAP_OX,
-                          j * TILE + y + MINIMAP_OY,
-                          color);
-            y++;
+                i * TILE + x + MINIMAP_OX,
+                j * TILE + y + MINIMAP_OY,
+                color);
         }
-        x++;
     }
 }
 
 void draw_mini_map(t_game *game, t_config *config)
 {
-    int i = 0, j;
-    while (config->map[i])
+    for (int i = 0; config->map[i]; i++)
     {
-        j = 0;
-        while (config->map[i][j])
+        for (int j = 0; config->map[i][j]; j++)
         {
             if (config->map[i][j] == '1')
                 draw_pixel(game, j, i, COLOR_WHITE);
+            else if (config->map[i][j] == 'D')
+                draw_pixel(game, j, i, 0xFF6600); // door color
             else
                 draw_pixel(game, j, i, COLOR_BLUE);
-            j++;
         }
-        i++;
     }
-    int p_mx = (int)roundf(game->player.x);
-    int p_my = (int)roundf(game->player.y);
-    int px = p_mx + MINIMAP_OX;
-    int py = p_my + MINIMAP_OY;
+    int px = (int)(game->player.x / TILE);
+    int py = (int)(game->player.y / TILE);
     for (int dy = -1; dy <= 1; dy++)
         for (int dx = -1; dx <= 1; dx++)
-            put_pixel_to_image(game, px + dx, py + dy, COLOR_PINK);
+            put_pixel_to_image(game,
+                MINIMAP_OX + px * TILE + dx,
+                MINIMAP_OY + py * TILE + dy,
+                COLOR_PINK);
 }
+
+/* ---------- RAYCAST HELPERS ---------- */
 
 int map_at(t_config *cfg, int mx, int my)
 {
-    if (my < 0 || mx < 0)
+    if (my < 0 || mx < 0 || my >= cfg->map_h || mx >= cfg->map_w)
         return '1';
-    if (my >= cfg->map_h || mx >= cfg->map_w)
-        return '1';
-    if (!cfg->map[my])
-        return '1';
-    if ((int)ft_strlen(cfg->map[my]) <= mx)
+    if (!cfg->map[my] || (int)ft_strlen(cfg->map[my]) <= mx)
         return '1';
     return cfg->map[my][mx];
 }
 
 void init_player_from_config(t_game *game, t_config *config)
 {
-    game->player.x = config->player_x * TILE + TILE / 2.0f;
-    game->player.y = config->player_y * TILE + TILE / 2.0f;
+    game->player.x = config->player_x * TILE + TILE / 2.0;
+    game->player.y = config->player_y * TILE + TILE / 2.0;
     if (config->player_dir == 'N')
-        game->player.angle = -M_PI / 2.0f;
+        game->player.angle = -M_PI / 2;
     else if (config->player_dir == 'S')
-        game->player.angle = M_PI / 2.0f;
+        game->player.angle = M_PI / 2;
     else if (config->player_dir == 'W')
         game->player.angle = M_PI;
     else
-        game->player.angle = 0.0f;
+        game->player.angle = 0;
 }
 
-int get_texture_pixel(t_texture *tex, int x, int y)
-{
-    if (!tex || !tex->addr || x < 0 || y < 0 || x >= tex->width || y >= tex->height)
-        return COLOR_WALL;
-    
-    char *pixel = tex->addr + (y * tex->line_length + x * (tex->bits_per_pixel / 8));
-    return *(int *)pixel;
-}
+/* ---------- RAYCAST CORE ---------- */
 
-void draw_textured_vertical_strip(t_game *game, int x, int start, int end, 
-                                   t_texture *tex, int tex_x, int slice_width)
-{
-    if (x < 0 || x >= game->win_w)
-        return;
-    
-    if (!tex || !tex->addr)
-    {
-        draw_vertical_strip(game, x, start, end, COLOR_WALL, slice_width);
-        return;
-    }
-    
-    if (tex_x < 0) tex_x = 0;
-    if (tex_x >= tex->width) tex_x = tex->width - 1;
-    
-    int wall_height = end - start;
-    if (wall_height <= 0) return;
-    
-    float step = (float)tex->height / (float)wall_height;
-    float tex_pos = (start - game->win_h / 2 + wall_height / 2) * step;
-    
-    for (int dx = 0; dx < slice_width && (x + dx) < game->win_w; dx++)
-    {
-        float current_tex_pos = tex_pos;
-        for (int y = start; y < end; y++)
-        {
-            if (y >= 0 && y < game->win_h)
-            {
-                int tex_y = (int)current_tex_pos % tex->height;
-                if (tex_y < 0) tex_y = 0;
-                if (tex_y >= tex->height) tex_y = tex->height - 1;
-                
-                int color = get_texture_pixel(tex, tex_x, tex_y);
-                put_pixel_to_image(game, x + dx, y, color);
-                
-                current_tex_pos += step;
-            }
-        }
-    }
-}
-
-void draw_vertical_strip(t_game *game, int x, int start, int end, int color, int slice_width)
-{
-    if (x < 0 || x >= game->win_w)
-        return;
-    
-    for (int dx = 0; dx < slice_width && (x + dx) < game->win_w; dx++)
-    {
-        for (int y = start; y < end; y++)
-        {
-            if (y >= 0 && y < game->win_h)
-                put_pixel_to_image(game, x + dx, y, color);
-        }
-    }
-}
-
-// DDA raycasting structure
 void init_raycasting(t_game *game, t_dda *dda, int x)
 {
-    // Convert player position from pixel to grid coordinates
     dda->pos_x = game->player.x / TILE;
     dda->pos_y = game->player.y / TILE;
-    
-    // Direction vector
-    dda->dir_x = cosf(game->player.angle);
-    dda->dir_y = sinf(game->player.angle);
-    
-    // Camera plane (perpendicular to direction, for FOV)
     float fov_rad = FOV_DEG * M_PI / 180.0f;
     float plane_len = tanf(fov_rad / 2.0f);
+    dda->dir_x = cosf(game->player.angle);
+    dda->dir_y = sinf(game->player.angle);
     dda->plane_x = -dda->dir_y * plane_len;
     dda->plane_y = dda->dir_x * plane_len;
-    
-    // X-coordinate in camera space (-1 to +1)
     dda->cam_x = 2 * x / (float)game->win_w - 1;
-    
-    // Ray direction
     dda->ray_dir_x = dda->dir_x + dda->plane_x * dda->cam_x;
     dda->ray_dir_y = dda->dir_y + dda->plane_y * dda->cam_x;
-    
-    // Current map position
     dda->map_x = (int)dda->pos_x;
     dda->map_y = (int)dda->pos_y;
 }
 
 void get_delta_dist(t_dda *dda)
 {
-    if (dda->ray_dir_x == 0)
-        dda->delta_dist_x = 1e30;
-    else
-        dda->delta_dist_x = fabsf(1 / dda->ray_dir_x);
-    
-    if (dda->ray_dir_y == 0)
-        dda->delta_dist_y = 1e30;
-    else
-        dda->delta_dist_y = fabsf(1 / dda->ray_dir_y);
+    dda->delta_dist_x = (dda->ray_dir_x == 0) ? 1e30 : fabsf(1 / dda->ray_dir_x);
+    dda->delta_dist_y = (dda->ray_dir_y == 0) ? 1e30 : fabsf(1 / dda->ray_dir_y);
 }
 
 void get_step_and_sidedist(t_dda *dda)
@@ -208,7 +120,6 @@ void get_step_and_sidedist(t_dda *dda)
         dda->step_x = 1;
         dda->side_dist_x = (dda->map_x + 1.0 - dda->pos_x) * dda->delta_dist_x;
     }
-    
     if (dda->ray_dir_y < 0)
     {
         dda->step_y = -1;
@@ -223,9 +134,7 @@ void get_step_and_sidedist(t_dda *dda)
 
 void digital_differential_analyser(t_config *config, t_dda *dda)
 {
-    int wall = 0;
-    
-    while (wall == 0)
+    while (1)
     {
         if (dda->side_dist_x < dda->side_dist_y)
         {
@@ -239,115 +148,95 @@ void digital_differential_analyser(t_config *config, t_dda *dda)
             dda->map_y += dda->step_y;
             dda->wall_side = 1;
         }
-        
-        if (map_at(config, dda->map_x, dda->map_y) == '1')
-            wall = 1;
+        char cell = map_at(config, dda->map_x, dda->map_y);
+        if (cell == '1' || cell == 'D')
+            break;
     }
 }
 
-int select_texture(t_dda *dda)
+/* ---------- TEXTURED DRAW ---------- */
+
+static int get_texture_pixel(t_texture *tex, int x, int y)
 {
-    int texture = 0;
-    
-    if (dda->wall_side == 1 && dda->ray_dir_y < 0)
-        texture = 1; // SOUTH
-    else if (dda->wall_side == 1 && dda->ray_dir_y > 0)
-        texture = 0; // NORTH
-    else if (dda->wall_side == 0 && dda->ray_dir_x < 0)
-        texture = 2; // WEST
-    else if (dda->wall_side == 0 && dda->ray_dir_x > 0)
-        texture = 3; // EAST
-    
-    return texture;
+    if (!tex || !tex->addr)
+        return COLOR_WALL;
+    x = (x < 0) ? 0 : (x >= tex->width ? tex->width - 1 : x);
+    y = (y < 0) ? 0 : (y >= tex->height ? tex->height - 1 : y);
+    return *(int *)(tex->addr + (y * tex->line_length + x * (tex->bits_per_pixel / 8)));
 }
 
 void draw_column(t_game *game, t_config *config, t_dda *dda, int x)
 {
-    if (dda->wall_side == 0)
-        dda->perp_wall_dist = (dda->side_dist_x - dda->delta_dist_x);
+    double perp = (dda->wall_side == 0)
+                    ? (dda->side_dist_x - dda->delta_dist_x)
+                    : (dda->side_dist_y - dda->delta_dist_y);
+    if (perp < 0.01f)
+        perp = 0.01f;
+
+    int wall_h = (int)(game->win_h / perp);
+    int start = -wall_h / 2 + game->win_h / 2;
+    if (start < 0) start = 0;
+    int end = wall_h / 2 + game->win_h / 2;
+    if (end >= game->win_h) end = game->win_h - 1;
+
+    t_texture *tex;
+    char cell = map_at(config, dda->map_x, dda->map_y);
+    if (cell == 'D' && game->door_texture.img)
+        tex = &game->door_texture;
     else
-        dda->perp_wall_dist = (dda->side_dist_y - dda->delta_dist_y);
-    
-    if (dda->perp_wall_dist < 0.1f)
-        dda->perp_wall_dist = 0.1f;
-    
-    int line_height = (int)(game->win_h / dda->perp_wall_dist);
-    int draw_start = -line_height / 2 + game->win_h / 2;
-    int draw_end = line_height / 2 + game->win_h / 2;
-    
-    if (draw_start < 0) draw_start = 0;
-    if (draw_end >= game->win_h) draw_end = game->win_h - 1;
-    
-    float wall_x;
-    if (dda->wall_side == 0)
-        wall_x = dda->pos_y + dda->perp_wall_dist * dda->ray_dir_y;
-    else
-        wall_x = dda->pos_x + dda->perp_wall_dist * dda->ray_dir_x;
-    wall_x -= floorf(wall_x);
-    
-    int tex_idx = select_texture(dda);
-    t_texture *wall_tex = NULL;
-    
-    if (tex_idx == 0)
-        wall_tex = &game->no_texture;
-    else if (tex_idx == 1)
-        wall_tex = &game->so_texture;
-    else if (tex_idx == 2)
-        wall_tex = &game->we_texture;
-    else if (tex_idx == 3)
-        wall_tex = &game->ea_texture;
-    
-    int tex_x = 0;
-    if (wall_tex)
     {
-        tex_x = (int)(wall_x * wall_tex->width);
-        
-    if ((dda->wall_side == 0 && dda->ray_dir_x < 0) || 
-        (dda->wall_side == 1 && dda->ray_dir_y > 0))
+        if (dda->wall_side == 0 && dda->ray_dir_x > 0)
+            tex = &game->ea_texture;
+        else if (dda->wall_side == 0)
+            tex = &game->we_texture;
+        else if (dda->wall_side == 1 && dda->ray_dir_y > 0)
+            tex = &game->so_texture;
+        else
+            tex = &game->no_texture;
+    }
+
+    double wall_x = (dda->wall_side == 0)
+                    ? (dda->pos_y + perp * dda->ray_dir_y)
+                    : (dda->pos_x + perp * dda->ray_dir_x);
+    wall_x -= floor(wall_x);
+    int tex_x = (int)(wall_x * tex->width);
+
+    for (int y = 0; y < game->win_h; y++)
+    {
+        if (y < start)
+            put_pixel_to_image(game, x, y, rgb_to_int(config->ceil));
+        else if (y > end)
+            put_pixel_to_image(game, x, y, rgb_to_int(config->floor));
+        else
         {
-            tex_x = wall_tex->width - tex_x - 1;
+            int tex_y = (int)((y - start) * tex->height / (float)(end - start));
+            int color = get_texture_pixel(tex, tex_x, tex_y);
+            put_pixel_to_image(game, x, y, color);
         }
     }
-    
-    int ceiling_color = rgb_to_int(config->ceil);
-    int floor_color = rgb_to_int(config->floor);
-    
-    draw_vertical_strip(game, x, 0, draw_start, ceiling_color, 1);
-    draw_textured_vertical_strip(game, x, draw_start, draw_end, wall_tex, tex_x, 1);
-    draw_vertical_strip(game, x, draw_end, game->win_h, floor_color, 1);
 }
 
 void draw_rays(t_game *game, t_config *config)
 {
-    t_dda dda;
-    
     for (int x = 0; x < game->win_w; x++)
     {
+        t_dda dda = {0};
         init_raycasting(game, &dda, x);
-        
         get_delta_dist(&dda);
-        
         get_step_and_sidedist(&dda);
-        
         digital_differential_analyser(config, &dda);
-        
         draw_column(game, config, &dda, x);
     }
 }
 
-void update_display(t_game *game, t_config *config)
-{
-    draw_rays(game, config);
-    draw_mini_map(game, config);
-    mlx_put_image_to_window(game->mlx, game->window, game->img, 0, 0);
-}
+/* ---------- WINDOW ---------- */
 
 int close_window(t_game *game)
 {
     mlx_clear_window(game->mlx, game->window);
     mlx_destroy_window(game->mlx, game->window);
     exit(0);
-    return (0);
+    return 0;
 }
 
 void draw_mini_and_rays(t_game *game, t_config *config)
@@ -357,101 +246,91 @@ void draw_mini_and_rays(t_game *game, t_config *config)
     mlx_put_image_to_window(game->mlx, game->window, game->img, 0, 0);
 }
 
+/* ---------- LOAD TEXTURES ---------- */
+
 void load_textures(t_game *game, t_config *config)
 {
-    // Load North texture
-    game->no_texture.img = mlx_xpm_file_to_image(game->mlx, config->no_tex,
-                                                   &game->no_texture.width,
-                                                   &game->no_texture.height);
-    if (game->no_texture.img)
-        game->no_texture.addr = mlx_get_data_addr(game->no_texture.img,
-                                                   &game->no_texture.bits_per_pixel,
-                                                   &game->no_texture.line_length,
-                                                   &game->no_texture.endian);
+    t_texture *t[5] = { &game->no_texture, &game->so_texture,
+                        &game->we_texture, &game->ea_texture, &game->door_texture };
+    char *paths[5] = { config->no_tex, config->so_tex,
+                       config->we_tex, config->ea_tex, config->door_tex };
 
-    // Load South texture
-    game->so_texture.img = mlx_xpm_file_to_image(game->mlx, config->so_tex,
-                                                   &game->so_texture.width,
-                                                   &game->so_texture.height);
-    if (game->so_texture.img)
+    for (int i = 0; i < 5; i++)
     {
-        game->so_texture.addr = mlx_get_data_addr(game->so_texture.img,
-            &game->so_texture.bits_per_pixel,
-            &game->so_texture.line_length,
-            &game->so_texture.endian);
+        if (!paths[i]) continue;
+        t[i]->img = mlx_xpm_file_to_image(game->mlx, paths[i],
+                                          &t[i]->width, &t[i]->height);
+        if (t[i]->img)
+        {
+            t[i]->addr = mlx_get_data_addr(t[i]->img,
+                            &t[i]->bits_per_pixel, &t[i]->line_length, &t[i]->endian);
+        }
+        else
+        {
+            fprintf(stderr, "⚠️ Failed to load texture: %s\n", paths[i]);
+        }
     }
-            
-    // Load West texture
-    game->we_texture.img = mlx_xpm_file_to_image(game->mlx, config->we_tex,
-                                                   &game->we_texture.width,
-                                                   &game->we_texture.height);
-    if (game->we_texture.img)
-        game->we_texture.addr = mlx_get_data_addr(game->we_texture.img,
-                                                   &game->we_texture.bits_per_pixel,
-                                                   &game->we_texture.line_length,
-                                                   &game->we_texture.endian);
-
-    // Load East texture
-    game->ea_texture.img = mlx_xpm_file_to_image(game->mlx, config->ea_tex,
-                                                   &game->ea_texture.width,
-                                                   &game->ea_texture.height);
-    if (game->ea_texture.img)
-        game->ea_texture.addr = mlx_get_data_addr(game->ea_texture.img,
-                                                   &game->ea_texture.bits_per_pixel,
-                                                   &game->ea_texture.line_length,
-                                                   &game->ea_texture.endian);
 }
+
+/* ---------- CREATE WINDOW ---------- */
 
 void creat_window(t_game *game, t_config *config)
 {
     game->win_w = 1200;
-    game->win_h = (config->map_h * TILE > 600) ? config->map_h * TILE : 600;
-    game->config = config;
+    game->win_h = fmax(600, config->map_h * TILE);
 
     game->mlx = mlx_init();
     if (!game->mlx)
         exit(EXIT_FAILURE);
-    
-    // Create image buffer for fast rendering
-    game->img = mlx_new_image(game->mlx, game->win_w, game->win_h);
-    if (!game->img)
-        exit(EXIT_FAILURE);
-    
-    game->img_addr = mlx_get_data_addr(game->img, &game->img_bpp,
-                                       &game->img_line_len, &game->img_endian);
-    
-    load_textures(game, config);
-    printf("%s\n", config->no_tex);
-    if (!game->no_texture.img)
-        printf("Failed to load North texture: %s\n", config->no_tex);
-    if (!game->so_texture.img)
-        printf("Failed to load South texture: %s\n", config->so_tex);
-    if (!game->we_texture.img)
-        printf("Failed to load West texture: %s\n", config->we_tex);
-    if (!game->ea_texture.img)
-        printf("Failed to load East texture: %s\n", config->ea_tex);
 
-    game->window = mlx_new_window(
-        game->mlx,
-        game->win_w,
-        game->win_h,
-        "CUB3D"
-    );
+    game->img = mlx_new_image(game->mlx, game->win_w, game->win_h);
+    game->img_addr = mlx_get_data_addr(game->img,
+                                       &game->img_bpp,
+                                       &game->img_line_len,
+                                       &game->img_endian);
+    load_textures(game, config);
+
+    game->window = mlx_new_window(game->mlx, game->win_w, game->win_h, "CUB3D");
     if (!game->window)
         exit(EXIT_FAILURE);
-    
+
     init_player_from_config(game, config);
     game->mouse.is_pressed = 0;
     game->mouse.prev_x = game->win_w / 2;
     game->mouse.prev_y = game->win_h / 2;
-  
-    mlx_mouse_move(game->mlx, game->window, game->win_w / 2, game->win_h / 2);
+
+    mlx_hook(game->window, 2, 1L << 0, key_press, game);
     mlx_hook(game->window, 4, 1L << 2, mouse_press, game);
     mlx_hook(game->window, 5, 1L << 3, mouse_release, game);
     mlx_hook(game->window, 6, 1L << 6, mouse_move, game);
-    mlx_hook(game->window, 2, 1L << 0, key_press, game);
     mlx_hook(game->window, 17, 1L << 17, close_window, game);
 
     draw_mini_and_rays(game, config);
     mlx_loop(game->mlx);
+}
+
+void free_config(t_config *config)
+{
+    if (!config)
+        return;
+
+    if (config->map)
+    {
+        free_split_safe(config->map);
+        config->map = NULL;
+    }
+    if (config->original_map)
+    {
+        free_split_safe(config->original_map);
+        config->original_map = NULL;
+    }
+
+    free(config->no_tex);
+    free(config->so_tex);
+    free(config->we_tex);
+    free(config->ea_tex);
+    free(config->door_tex);
+
+    config->map_w = 0;
+    config->map_h = 0;
 }
