@@ -22,6 +22,9 @@ main 	:= src/main.c
 
 gnl     := gnl/get_next_line_utils.c gnl/get_next_line.c
 
+SRCS = src/main.c \
+        src/raycasting/door_utils.c
+
 SRC    := $(srcode) $(RAYCASTING) $(main) $(libft) $(gnl) 
 
 OBJS 	:= $(SRC:.c=.o)

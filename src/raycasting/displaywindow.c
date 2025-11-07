@@ -3,7 +3,9 @@
 #include <stdio.h>
 #include <string.h>
 
-/* ---------- HELPERS ---------- */
+
+
+t_door *find_door(t_doors *doors, int x, int y);
 
 static int rgb_to_int(int rgb[3])
 {
@@ -18,44 +20,62 @@ static void put_pixel_to_image(t_game *game, int x, int y, int color)
     *(unsigned int *)dst = color;
 }
 
-/* ---------- MINIMAP ---------- */
 
-void draw_pixel(t_game *game, int i, int j, int color)
+static void draw_minimap_cell(t_game *game, int cx, int cy, int color)
 {
-    for (int x = 0; x < TILE; x++)
+    int s = MINIMAP_SCALE;
+    int ox = MINIMAP_OX;
+    int oy = MINIMAP_OY;
+    int x, y;
+
+    for (y = 0; y < s; ++y)
     {
-        for (int y = 0; y < TILE; y++)
+        for (x = 0; x < s; ++x)
         {
-            put_pixel_to_image(game,
-                i * TILE + x + MINIMAP_OX,
-                j * TILE + y + MINIMAP_OY,
-                color);
+            put_pixel_to_image(game, ox + cx * s + x, oy + cy * s + y, color);
         }
     }
 }
 
 void draw_mini_map(t_game *game, t_config *config)
 {
-    for (int i = 0; config->map[i]; i++)
+    int j, i;
+
+    if (!game || !config || !config->map)
+        return ;
+
+    /* draw map cells (handle variable row lengths) */
+    for (j = 0; j < config->map_h; ++j)
     {
-        for (int j = 0; config->map[i][j]; j++)
+        if (!config->map[j])
+            continue ;
+        for (i = 0; (size_t)i < ft_strlen(config->map[j]); ++i)
         {
-            if (config->map[i][j] == '1')
-                draw_pixel(game, j, i, COLOR_WHITE);
-            else if (config->map[i][j] == 'D')
-                draw_pixel(game, j, i, 0xFF6600); // door color
-            else
-                draw_pixel(game, j, i, COLOR_BLUE);
+            char c = config->map[j][i];
+            int color = COLOR_BLUE; /* default floor/empty */
+
+            if (c == '1')
+                color = COLOR_WHITE;
+            else if (c == 'D')
+            {
+                t_door *d = find_door(&game->doors, i, j);
+                color = (d && d->open) ? 0x33AA33 : 0xAA3300; /* open = greenish, closed = orange */
+            }
+            draw_minimap_cell(game, i, j, color);
         }
     }
-    int px = (int)(game->player.x / TILE);
-    int py = (int)(game->player.y / TILE);
-    for (int dy = -1; dy <= 1; dy++)
-        for (int dx = -1; dx <= 1; dx++)
-            put_pixel_to_image(game,
-                MINIMAP_OX + px * TILE + dx,
-                MINIMAP_OY + py * TILE + dy,
-                COLOR_PINK);
+
+    /* draw player position (exact inside minimap) */
+    {
+        int s = MINIMAP_SCALE;
+        int ox = MINIMAP_OX;
+        int oy = MINIMAP_OY;
+        int px = ox + (int)((game->player.x / TILE) * s);
+        int py = oy + (int)((game->player.y / TILE) * s);
+        for (int dy = -1; dy <= 1; ++dy)
+            for (int dx = -1; dx <= 1; ++dx)
+                put_pixel_to_image(game, px + dx, py + dy, COLOR_PINK);
+    }
 }
 
 /* ---------- RAYCAST HELPERS ---------- */
@@ -333,4 +353,5 @@ void free_config(t_config *config)
 
     config->map_w = 0;
     config->map_h = 0;
-}
+    config->map_w = 0;
+    config->map_h = 0;}

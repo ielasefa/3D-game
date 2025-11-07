@@ -6,15 +6,15 @@
 /*   By: iel-asef <iel-asef@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/10 20:12:21 by iel-asef          #+#    #+#             */
-/*   Updated: 2025/11/06 04:19:31 by iel-asef         ###   ########.fr       */
+/*   Updated: 2025/11/07 19:26:29 by iel-asef         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/cub.h"
 #include <fcntl.h>
 #include <unistd.h>
-#include <stdio.h>   /* added for debug prints */
-#include <errno.h>   /* for errno */
+#include <stdio.h>   
+#include <errno.h>  
 
 static int has_double_comma(const char *str)
 {
@@ -74,12 +74,10 @@ static void set_texture_or_die(char **dst, const char *raw)
 
     if (*dst)
     {
-        fprintf(stderr, "DEBUG: duplicate texture assignment attempt for path: '%s'\n", raw);
         print_error(ERR_INVALID_PATH);
         return;
     }
     path = ft_strtrim(raw, " \t\r\n");
-    fprintf(stderr, "DEBUG: set_texture_or_die -> raw='%s' trimmed='%s'\n", raw, path ? path : "(null)");
     if (!path || *path == '\0')
     {
         free(path);
@@ -94,7 +92,6 @@ static void set_texture_or_die(char **dst, const char *raw)
     }
     if (!file_readable(path))
     {
-        fprintf(stderr, "DEBUG: file_readable failed for '%s' (errno=%d)\n", path, errno);
         print_error_path(ERR_INVALID_PATH, path);
         return;
     }

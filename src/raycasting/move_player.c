@@ -6,17 +6,13 @@
 /*   By: iel-asef <iel-asef@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/23 09:02:16 by ahabibi-          #+#    #+#             */
-/*   Updated: 2025/11/07 00:17:36 by iel-asef         ###   ########.fr       */
+/*   Updated: 2025/11/07 19:27:50 by iel-asef         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/cub.h"
 #include <math.h>
 #include <stdlib.h>
-
-/* -------------------------------------------------------------------------- */
-/*                         VALID POSITION / COLLISION                         */
-/* -------------------------------------------------------------------------- */
 
 int	is_valid_position(t_config *config, float x, float y)
 {
@@ -29,13 +25,9 @@ int	is_valid_position(t_config *config, float x, float y)
 	map_x = (int)(x / TILE);
 	map_y = (int)(y / TILE);
 	cell = map_at(config, map_x, map_y);
-	/* ممنوع دخول الجدران أو الأبواب المغلقة */
 	return (cell != '1' && cell != 'D');
 }
 
-/* -------------------------------------------------------------------------- */
-/*                                 ROTATION                                   */
-/* -------------------------------------------------------------------------- */
 
 void	rotate_player(t_game *game, int direction)
 {
@@ -54,9 +46,6 @@ void	rotate_player(t_game *game, int direction)
 		game->player.angle -= 2 * M_PI;
 }
 
-/* -------------------------------------------------------------------------- */
-/*                                MOVE PLAYER                                 */
-/* -------------------------------------------------------------------------- */
 
 void	move_player(t_game *game, t_config *config, int direction)
 {
@@ -109,9 +98,6 @@ void	move_player(t_game *game, t_config *config, int direction)
 		game->player.y = new_y;
 }
 
-/* -------------------------------------------------------------------------- */
-/*                                 KEY PRESS                                  */
-/* -------------------------------------------------------------------------- */
 
 int	key_press(int key, t_game *game)
 {

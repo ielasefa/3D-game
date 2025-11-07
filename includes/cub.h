@@ -6,7 +6,7 @@
 /*   By: iel-asef <iel-asef@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/08 11:49:59 by iel-asef          #+#    #+#             */
-/*   Updated: 2025/11/07 00:43:31 by iel-asef         ###   ########.fr       */
+/*   Updated: 2025/11/07 19:28:40 by iel-asef         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,8 @@
 # define ERR_MULTIPLAYER     8
 # define ERR_UNKNOWN         99
 
+
+# define MINIMAP_SCALE 8
 #define TILE 8
 #define MINIMAP_OX 30
 #define MINIMAP_OY 30
@@ -88,13 +90,13 @@ typedef struct s_config
     int		floor[3];
     int		ceil[3];
     char	**map;
-    char    **original_map; /* added: copy of parsed map to know original doors */
+    char    **original_map; 
     int		map_h;
     int		map_w;
     int		player_x;
     int		player_y;
     char	player_dir;
-    char    *door_tex;    /* path for door texture (DO) */
+    char    *door_tex;    
 }	t_config;
 
 typedef struct s_texture {
@@ -107,12 +109,11 @@ typedef struct s_texture {
     int     endian;
 }   t_texture;
 
-/* doors state */
 typedef struct s_door
 {
     int	x;
     int	y;
-    int	open;  /* أضف هنا */
+    int	open;  
 }	t_door;
 
 typedef struct s_doors
@@ -122,13 +123,11 @@ typedef struct s_doors
     int		capacity;
 }	t_doors;
 
-/* doors (bonus) prototypes */
 int		was_door_before(int x, int y, char **original_map);
 void	toggle_door(char **map, char **original_map,
             double player_x, double player_y, double dir_x, double dir_y);
 int		pos_is_door(char **map, double px, double py);
 
-/* doors state helpers */
 void	doors_init(t_doors *doors);
 void	doors_free(t_doors *doors);
 int		doors_add(t_doors *doors, int x, int y);
@@ -215,9 +214,9 @@ void    print_error_path(int code, const char *detail);
 void	free_split_safe(char **arr);
 void creat_window(t_game *game, t_config *config);
 
-/* helpers */
-
 int was_door_before(int x, int y, char **original_map);
 void free_config(t_config *config);
-char **duplicate_map(char **map); /* add prototype to duplicate parsed map */
+char **duplicate_map(char **map);
+t_door *find_door(t_doors *doors, int x, int y);
+
 #endif

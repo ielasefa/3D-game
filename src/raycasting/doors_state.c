@@ -69,7 +69,7 @@ void doors_build(t_doors *doors, char **map, int h, int w)
                         return ;
                 doors->data[doors->count].x = x;
                 doors->data[doors->count].y = y;
-                doors->data[doors->count].open = 0;  /* استعمل open بدل is_open */
+                doors->data[doors->count].open = 0;  
                 doors->count++;
             }
             x++;
@@ -110,5 +110,5 @@ void toggle_door_in_front(t_config *cfg, t_doors *doors, double px, double py, d
         return ;
     d = find_door(doors, tx, ty);
     if (d)
-        d->open = !(d->open);  /* استعمل open بدل is_open */
+        d->open = !(d->open);  
 }
