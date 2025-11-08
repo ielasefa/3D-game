@@ -6,15 +6,11 @@
 /*   By: iel-asef <iel-asef@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/10 20:12:21 by iel-asef          #+#    #+#             */
-/*   Updated: 2025/11/07 19:26:29 by iel-asef         ###   ########.fr       */
+/*   Updated: 2025/11/08 01:45:56 by iel-asef         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/cub.h"
-#include <fcntl.h>
-#include <unistd.h>
-#include <stdio.h>   
-#include <errno.h>  
 
 static int has_double_comma(const char *str)
 {
@@ -179,17 +175,3 @@ void	parse_identifier(t_config *cfg, char *line)
         print_error(ERR_UNKNOWN);
 }
 
-int	is_map_line(char *line)
-{
-    int	i;
-
-    i = 0;
-    while (line[i])
-    {
-        if (line[i] != ' ' && line[i] != '0' && line[i] != '1' &&
-            line[i] != 'D' && !is_player_char(line[i]))
-            return (0);
-        i++;
-    }
-    return (1);
-}

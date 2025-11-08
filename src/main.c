@@ -6,7 +6,7 @@
 /*   By: iel-asef <iel-asef@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/08 11:50:05 by iel-asef          #+#    #+#             */
-/*   Updated: 2025/11/07 00:38:54 by iel-asef         ###   ########.fr       */
+/*   Updated: 2025/11/08 01:25:16 by iel-asef         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +61,7 @@ int	main(int argc, char **argv)
 	creat_window(&game, &config);
 
 	doors_free(&game.doors);
-	free_split_safe(game.config->original_map);
+	ft_free_split(game.config->original_map);
 	free_config(&config);
 	return (0);
 }

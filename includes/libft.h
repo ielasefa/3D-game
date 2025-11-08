@@ -6,7 +6,7 @@
 /*   By: iel-asef <iel-asef@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/11 16:00:00 by iel-asef          #+#    #+#             */
-/*   Updated: 2025/09/11 21:42:09 by iel-asef         ###   ########.fr       */
+/*   Updated: 2025/11/08 00:38:11 by iel-asef         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@
 # include <stdlib.h>
 #include <limits.h>
 
+void	*ft_memcpy(void *dst, const void *src, size_t n);
 int		ft_atoi(const char *str);
 void	ft_putendl_fd(char *s, int fd);
 int		ft_strcmp(const char *s1, const char *s2);

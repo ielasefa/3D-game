@@ -6,27 +6,13 @@
 /*   By: iel-asef <iel-asef@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/10 20:50:45 by iel-asef          #+#    #+#             */
-/*   Updated: 2025/11/05 17:18:56 by iel-asef         ###   ########.fr       */
+/*   Updated: 2025/11/08 01:37:04 by iel-asef         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/cub.h"
 
-static int is_valid_map_char(char c)
-{
-    return (c == '0' || c == '1' || c == 'N' || c == 'S' ||
-            c == 'E' || c == 'W' || c == ' ' || c == 'D');
-}
-
-static int get_height(char **map)
-{
-    int h = 0;
-    while (map && map[h])
-        h++;
-    return h;
-}
-
-static int get_max_width(char **map)
+ int get_max_width(char **map)
 {
     int i = 0, maxw = 0;
     while (map && map[i])
@@ -38,8 +24,7 @@ static int get_max_width(char **map)
     }
     return maxw;
 }
-
-static char char_at(t_config *cfg, int i, int j)
+char char_at(t_config *cfg, int i, int j)
 {
     if (i < 0 || i >= cfg->map_h)
         return ' ';
@@ -49,7 +34,7 @@ static char char_at(t_config *cfg, int i, int j)
     return cfg->map[i][j];
 }
 
-static void find_player(t_config *cfg)
+void find_player(t_config *cfg)
 {
     int i;
     int j;
@@ -81,7 +66,7 @@ static void find_player(t_config *cfg)
         print_error(ERR_MULTIPLAYER);
 }
 
-static void ensure_closed(t_config *cfg)
+void ensure_closed(t_config *cfg)
 {
     int i;
     int j;

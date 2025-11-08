@@ -336,12 +336,12 @@ void free_config(t_config *config)
 
     if (config->map)
     {
-        free_split_safe(config->map);
+        ft_free_split(config->map);
         config->map = NULL;
     }
     if (config->original_map)
     {
-        free_split_safe(config->original_map);
+        ft_free_split(config->original_map);
         config->original_map = NULL;
     }
 

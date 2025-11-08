@@ -6,7 +6,7 @@
 /*   By: iel-asef <iel-asef@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/08 11:49:59 by iel-asef          #+#    #+#             */
-/*   Updated: 2025/11/07 19:28:40 by iel-asef         ###   ########.fr       */
+/*   Updated: 2025/11/08 01:36:28 by iel-asef         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -133,6 +133,8 @@ void	doors_free(t_doors *doors);
 int		doors_add(t_doors *doors, int x, int y);
 int		doors_remove(t_doors *doors, int x, int y);
 int		doors_is_saved(t_doors *doors, int x, int y);
+void	*ft_memcpy(void *dst, const void *src, size_t n);
+
 
 typedef struct s_mouse
 {
@@ -211,10 +213,12 @@ int	mouse_press(int button, int x, int y, t_game *game);
 
 int ft_isdigit(int c);
 void    print_error_path(int code, const char *detail);
-void	free_split_safe(char **arr);
+// void	free_split_safe(char **arr);
 void creat_window(t_game *game, t_config *config);
 
 int was_door_before(int x, int y, char **original_map);
+int is_valid_map_char(char c);
+int get_height(char **map);
 void free_config(t_config *config);
 char **duplicate_map(char **map);
 t_door *find_door(t_doors *doors, int x, int y);
