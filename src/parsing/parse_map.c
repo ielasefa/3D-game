@@ -6,15 +6,19 @@
 /*   By: iel-asef <iel-asef@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/10 20:50:45 by iel-asef          #+#    #+#             */
-/*   Updated: 2025/11/08 01:37:04 by iel-asef         ###   ########.fr       */
+/*   Updated: 2025/11/10 14:16:08 by iel-asef         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/cub.h"
 
- int get_max_width(char **map)
+int get_max_width(char **map)
 {
-    int i = 0, maxw = 0;
+    int i ;
+    int maxw ;
+    
+    maxw = 0;
+    i = 0;
     while (map && map[i])
     {
         int len = (int)ft_strlen(map[i]);
@@ -24,6 +28,7 @@
     }
     return maxw;
 }
+
 char char_at(t_config *cfg, int i, int j)
 {
     if (i < 0 || i >= cfg->map_h)

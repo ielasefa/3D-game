@@ -6,26 +6,25 @@
 /*   By: iel-asef <iel-asef@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/08 01:30:21 by iel-asef          #+#    #+#             */
-/*   Updated: 2025/11/08 01:46:03 by iel-asef         ###   ########.fr       */
+/*   Updated: 2025/11/10 19:29:36 by iel-asef         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/cub.h"
 
-int	is_map_line(char *line)
+int is_map_line(char *line)
 {
-    int	i;
+    int i = 0;
 
-    i = 0;
     while (line[i])
     {
-        if (line[i] != ' ' && line[i] != '0' && line[i] != '1' &&
-            line[i] != 'D' && !is_player_char(line[i]))
+        if (!is_valid_map_char(line[i]))
             return (0);
         i++;
     }
     return (1);
 }
+
 
 int is_valid_map_char(char c)
 {
