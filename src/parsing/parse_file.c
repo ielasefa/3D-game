@@ -6,7 +6,7 @@
 /*   By: iel-asef <iel-asef@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/08 11:50:13 by iel-asef          #+#    #+#             */
-/*   Updated: 2025/11/16 16:46:11 by iel-asef         ###   ########.fr       */
+/*   Updated: 2025/11/16 19:25:34 by iel-asef         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,6 @@ int	is_empty_line(char *line)
     return (line[i] == '\n' || line[i] == '\0');
 }
 
-// In-place trim (no allocations). Returns a view into 'line'.
 static char *trim_line_inplace(char *line)
 {
     char *start;
@@ -49,13 +48,11 @@ static char *trim_line_inplace(char *line)
     if (len && line[len - 1] == '\n')
         line[len - 1] = '\0';
 
-    // right trim spaces/tabs
     end = line + ft_strlen(line);
     while (end > line && (end[-1] == ' ' || end[-1] == '\t'))
         --end;
     *end = '\0';
 
-    // left trim spaces/tabs
     start = line;
     while (*start == ' ' || *start == '\t')
         ++start;
@@ -84,41 +81,11 @@ int	parse_file(char *filename, t_config *config)
             free(line);
             continue;
         }
-        // No allocation here
         view = trim_line_inplace(line);
         if (view && *view)
             parse_identifier(config, view);
         free(line);
     }
     close(fd);
-
-    // Best-effort purge of GNL storage in normal path
-    (void)get_next_line(-1);
-
     return (0);
 }
-
-// Removed: static void cleanup_and_exit(t_game *game)
-// Cleanup is centralized in src/raycasting/displaywindow.c
-
-// In set_texture_or_die, when print_error is called, it should exit:
-// static void set_texture_or_die(char **dst, const char *raw)
-// {
-//     char *path;
-
-//     if (*dst)
-//     {
-//         print_error(ERR_INVALID_PATH);
-//         return;  // print_error already calls exit()
-//     }
-//     path = ft_strdup(raw);
-//     if (!path)
-//         return;
-//     if (has_cub_extension(path))
-//         return;
-//     if (is_empty_line(path))
-//         return;
-//     if (ft_strcmp(path, ".cub") == 0)
-//         return;
-//     print_error(ERR_INVALID_EXT);
-// }
