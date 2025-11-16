@@ -249,14 +249,51 @@ void draw_rays(t_game *game, t_config *config)
     }
 }
 
-/* ---------- WINDOW ---------- */
+static void destroy_images(t_game *game)
+{
+    if (!game || !game->mlx)
+        return;
+
+    if (game->img) {
+        mlx_destroy_image(game->mlx, game->img);
+        game->img = NULL;
+        game->img_addr = NULL;
+    }
+
+    t_texture *arr[5] = { &game->no_texture, &game->so_texture,
+                          &game->we_texture, &game->ea_texture, &game->door_texture };
+    for (int i = 0; i < 5; ++i) {
+        if (arr[i]->img) {
+            mlx_destroy_image(game->mlx, arr[i]->img);
+            arr[i]->img = NULL;
+            arr[i]->addr = NULL;
+        }
+    }
+}
+
+static void cleanup_and_exit(t_game *game)
+{
+    destroy_images(game);
+
+    if (game->window) {
+        mlx_destroy_window(game->mlx, game->window);
+        game->window = NULL;
+    }
+    if (game->mlx) {
+        mlx_destroy_display(game->mlx);
+        free(game->mlx);
+        game->mlx = NULL;
+    }
+
+    free_config(game->config);  // frees texture paths + maps
+    doors_free(&game->doors);
+    exit(0);
+}
 
 int close_window(t_game *game)
 {
-    mlx_clear_window(game->mlx, game->window);
-    mlx_destroy_window(game->mlx, game->window);
-    exit(0);
-    return 0;
+    cleanup_and_exit(game);
+    return (0);
 }
 
 void draw_mini_and_rays(t_game *game, t_config *config)
@@ -265,8 +302,6 @@ void draw_mini_and_rays(t_game *game, t_config *config)
     draw_mini_map(game, config);
     mlx_put_image_to_window(game->mlx, game->window, game->img, 0, 0);
 }
-
-/* ---------- LOAD TEXTURES ---------- */
 
 void load_textures(t_game *game, t_config *config)
 {
@@ -292,7 +327,6 @@ void load_textures(t_game *game, t_config *config)
     }
 }
 
-/* ---------- CREATE WINDOW ---------- */
 
 void creat_window(t_game *game, t_config *config)
 {
@@ -354,4 +388,5 @@ void free_config(t_config *config)
     config->map_w = 0;
     config->map_h = 0;
     config->map_w = 0;
-    config->map_h = 0;}
+    config->map_h = 0;
+}

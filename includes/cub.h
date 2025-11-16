@@ -6,7 +6,7 @@
 /*   By: iel-asef <iel-asef@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/08 11:49:59 by iel-asef          #+#    #+#             */
-/*   Updated: 2025/11/08 01:36:28 by iel-asef         ###   ########.fr       */
+/*   Updated: 2025/11/16 15:39:13 by iel-asef         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -194,6 +194,7 @@ void rotate_player(t_game *game, int direction);
 
 void creat_window(t_game *game,t_config *config);
 int key_press(int keycode, t_game *game);
+int close_window(t_game *game);
 
 //PARSING FUNCTIONS 
 int		has_cub_extension(char *path);

@@ -6,11 +6,11 @@
 /*   By: iel-asef <iel-asef@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/23 09:02:16 by ahabibi-          #+#    #+#             */
-/*   Updated: 2025/11/07 19:27:50 by iel-asef         ###   ########.fr       */
+/*   Updated: 2025/11/15 23:07:38 by iel-asef         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/cub.h"
+#include "../../includes/cub.h"
 #include <math.h>
 #include <stdlib.h>
 
@@ -121,11 +121,7 @@ int	key_press(int key, t_game *game)
 	else if (key == 65363) // Right arrow
 		move_player(game, config, 65363);
 	else if (key == 65307) // Escape
-	{
-		if (game->window)
-			mlx_destroy_window(game->mlx, game->window);
-		exit(0);
-	}
+		close_window(game);
 	draw_mini_and_rays(game, config);
 	return (0);
 }

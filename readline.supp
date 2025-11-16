@@ -1,0 +1,10 @@
+{
+   mlx_x11_leak
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   ...
+   fun:malloc
+   fun:strdup
+   fun:XOpenDisplay
+   fun:mlx_init*
+}
