@@ -6,7 +6,7 @@
 /*   By: iel-asef <iel-asef@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/10 20:12:21 by iel-asef          #+#    #+#             */
-/*   Updated: 2025/11/17 17:46:30 by iel-asef         ###   ########.fr       */
+/*   Updated: 2025/11/17 18:37:10 by iel-asef         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,51 +103,78 @@ static const char *skip_id_and_spaces(const char *s, int idlen)
     return s;
 }
 
-void	parse_rgb(int color[3], char *s)
+
+void    free_config(t_config *cfg)
+{
+    int i;
+
+    if (!cfg)
+        return;
+
+    free(cfg->no_tex);
+    free(cfg->so_tex);
+    free(cfg->we_tex);
+    free(cfg->ea_tex);
+    free(cfg->door_tex);
+
+    if (cfg->map)
+    {
+        i = 0;
+        while (i < cfg->map_h)
+        {
+            free(cfg->map[i]);
+            i++;
+        }
+        free(cfg->map);
+    }
+
+}
+int	parse_rgb(int color[3], char *s)
 {
     char	**split;
     int		i;
-    
+    char	*trimmed;
+
+    if (!s)
+        return (1);
+
     while (*s && (*s == ' ' || *s == '\t'))
         s++;
-    if (!s || *s == ',' || s[ft_strlen(s) - 1] == ',')
-    {
-        print_error(ERR_INVALID_RGB);
-        return 1;
-    }
+
+    if (*s == ',' || s[ft_strlen(s) - 1] == ',')
+        return (1);
 
     if (has_double_comma(s))
-    {
-        
-        print_error(ERR_INVALID_RGB);
-    }
+        return (1);
 
     split = ft_split(s, ',');
     if (!split || ft_splitlen(split) != 3)
     {
         ft_free_split(split);
-        print_error(ERR_INVALID_RGB);
+        return (1);
     }
 
-    i = -1;
-    while (++i < 3)
+    i = 0;
+    while (i < 3)
     {
-        char *trimmed = ft_strtrim(split[i], " \t");
+        trimmed = ft_strtrim(split[i], " \t");
         if (!trimmed || !*trimmed || !is_valid_number(trimmed))
         {
             ft_free_split(split);
             free(trimmed);
-            print_error(ERR_INVALID_RGB);
+            return (1);
         }
         color[i] = ft_atoi(trimmed);
         free(trimmed);
         if (color[i] < 0 || color[i] > 255)
         {
             ft_free_split(split);
-            print_error(ERR_INVALID_RGB);
+            return (1);
         }
+        i++;
     }
     ft_free_split(split);
+    return (0);
 }
 
 void	parse_identifier(t_config *cfg, char *line)
@@ -166,9 +193,19 @@ void	parse_identifier(t_config *cfg, char *line)
         return (set_texture_or_die(&cfg->door_tex, skip_id_and_spaces(s, 2)), (void)0);
 
     if (s[0] == 'F' && is_space((unsigned char)s[1]))
-        return (parse_rgb(cfg->floor, (char *)skip_id_and_spaces(s, 1)), (void)0);
+    {
+        if (parse_rgb(cfg->floor, (char *)skip_id_and_spaces(s, 1)))
+            print_error(ERR_INVALID_RGB);
+            free_config(cfg);
+        return;
+    }
     if (s[0] == 'C' && is_space((unsigned char)s[1]))
-        return (parse_rgb(cfg->ceil, (char *)skip_id_and_spaces(s, 1)), (void)0);
+    {
+        if (parse_rgb(cfg->ceil, (char *)skip_id_and_spaces(s, 1)))
+            print_error(ERR_INVALID_RGB);
+           free_config(cfg);
+        return;
+    }
 
     if (is_map_line(line))
     {

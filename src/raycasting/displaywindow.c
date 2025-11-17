@@ -362,32 +362,3 @@ void creat_window(t_game *game, t_config *config)
     draw_mini_and_rays(game, config);
     mlx_loop(game->mlx);
 }
-
-void free_config(t_config *config)
-{
-    if (!config)
-        return;
-
-    if (config->map)
-    {
-        ft_free_split(config->map);
-        config->map = NULL;
-    }
-    if (config->original_map)
-    {
-        ft_free_split(config->original_map);
-        config->original_map = NULL;
-    }
-
-    free(config->no_tex);
-    free(config->so_tex);
-    free(config->we_tex);
-    free(config->ea_tex);
-    free(config->door_tex);
-    printf("---------------\n");
-
-    config->map_w = 0;
-    config->map_h = 0;
-    config->map_w = 0;
-    config->map_h = 0;
-}

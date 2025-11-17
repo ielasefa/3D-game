@@ -6,7 +6,7 @@
 /*   By: iel-asef <iel-asef@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/08 11:49:59 by iel-asef          #+#    #+#             */
-/*   Updated: 2025/11/17 14:26:15 by iel-asef         ###   ########.fr       */
+/*   Updated: 2025/11/17 18:37:29 by iel-asef         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -171,7 +171,7 @@ typedef struct s_game
     t_texture   so_texture;     // South wall texture
     t_texture   we_texture;     // West wall texture
     t_texture   ea_texture;     // East wall texture
-    t_texture   door_texture; /* <--- added: door texture */
+    t_texture   door_texture; 
 }   t_game;
 /// move player
 
@@ -201,7 +201,7 @@ int		has_cub_extension(char *path);
 int		is_empty_line(char *line);
 int		is_player_char(char c);
 int		parse_file(char *filename, t_config *config);
-void	parse_rgb(int color[3], char *s);
+int		parse_rgb(int color[3], char *s);
 void	parse_identifier(t_config *cfg, char *line);
 int		is_map_line(char *line);
 char	**add_line_to_array(char **array, const char *line);
@@ -214,7 +214,6 @@ int	mouse_press(int button, int x, int y, t_game *game);
 
 int ft_isdigit(int c);
 void    print_error_path(int code, const char *detail);
-// void	free_split_safe(char **arr);
 void creat_window(t_game *game, t_config *config);
 
 int was_door_before(int x, int y, char **original_map);
@@ -224,5 +223,5 @@ void free_config(t_config *config);
 char **duplicate_map(char **map);
 t_door *find_door(t_doors *doors, int x, int y);
 void cleanup_and_exit(t_game *game);
-
+void    free_config(t_config *cfg);
 #endif
