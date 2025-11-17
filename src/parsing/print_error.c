@@ -6,7 +6,7 @@
 /*   By: iel-asef <iel-asef@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/10 21:05:32 by iel-asef          #+#    #+#             */
-/*   Updated: 2025/11/05 01:16:17 by iel-asef         ###   ########.fr       */
+/*   Updated: 2025/11/17 14:52:28 by iel-asef         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,5 +53,4 @@ void    print_error_path(int code, const char *detail)
         ft_putendl_fd("Invalid texture extension", 2);
     else
         ft_putendl_fd("Unknown error", 2);
-    exit(1);
 }

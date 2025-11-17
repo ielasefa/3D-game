@@ -6,7 +6,7 @@
 /*   By: iel-asef <iel-asef@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/08 11:50:05 by iel-asef          #+#    #+#             */
-/*   Updated: 2025/11/16 16:28:09 by iel-asef         ###   ########.fr       */
+/*   Updated: 2025/11/17 14:26:41 by iel-asef         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,6 +59,7 @@ int	main(int argc, char **argv)
 
 	doors_init(&game.doors);
 	creat_window(&game, &config);
+	cleanup_and_exit(&game);
 	// creat_window enters mlx_loop() and cleanup is performed by close_window()
 	// (cleanup_and_exit in displaywindow.c). No code after mlx_loop().
 	return (0);

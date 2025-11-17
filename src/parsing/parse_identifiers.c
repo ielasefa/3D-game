@@ -6,7 +6,7 @@
 /*   By: iel-asef <iel-asef@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/10 20:12:21 by iel-asef          #+#    #+#             */
-/*   Updated: 2025/11/16 16:43:18 by iel-asef         ###   ########.fr       */
+/*   Updated: 2025/11/17 17:46:30 by iel-asef         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,25 +71,26 @@ static void set_texture_or_die(char **dst, const char *raw)
     if (*dst)
     {
         print_error(ERR_INVALID_PATH);
-        return;
+        exit(1);
     }
     path = ft_strtrim(raw, " \t\r\n");
     if (!path || *path == '\0')
     {
         free(path);
         print_error(ERR_INVALID_PATH);
-        return;
+        exit(1);
     }
     if (!ends_with_xpm(path))
     {
         free(path);
         print_error(ERR_INVALID_EXT);
-        return;
+        exit(1);
     }
     if (!file_readable(path))
     {
         print_error_path(ERR_INVALID_PATH, path);
-        return;
+        free(path);
+        exit(1);
     }
     *dst = path;
 }
@@ -109,12 +110,17 @@ void	parse_rgb(int color[3], char *s)
     
     while (*s && (*s == ' ' || *s == '\t'))
         s++;
-        
     if (!s || *s == ',' || s[ft_strlen(s) - 1] == ',')
+    {
         print_error(ERR_INVALID_RGB);
+        return 1;
+    }
 
     if (has_double_comma(s))
+    {
+        
         print_error(ERR_INVALID_RGB);
+    }
 
     split = ft_split(s, ',');
     if (!split || ft_splitlen(split) != 3)
@@ -150,7 +156,7 @@ void	parse_identifier(t_config *cfg, char *line)
 
     if (!ft_strncmp(s, "NO", 2) && is_space((unsigned char)s[2]))
         return (set_texture_or_die(&cfg->no_tex, skip_id_and_spaces(s, 2)), (void)0);
-    if (!ft_strncmp(s, "SO", 2) && is_space((unsigned char)s[2]))
+    if(!ft_strncmp(s, "SO", 2) && is_space((unsigned char)s[2]))
         return (set_texture_or_die(&cfg->so_tex, skip_id_and_spaces(s, 2)), (void)0);
     if (!ft_strncmp(s, "WE", 2) && is_space((unsigned char)s[2]))
         return (set_texture_or_die(&cfg->we_tex, skip_id_and_spaces(s, 2)), (void)0);

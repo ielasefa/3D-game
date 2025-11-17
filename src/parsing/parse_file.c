@@ -6,7 +6,7 @@
 /*   By: iel-asef <iel-asef@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/08 11:50:13 by iel-asef          #+#    #+#             */
-/*   Updated: 2025/11/16 19:25:34 by iel-asef         ###   ########.fr       */
+/*   Updated: 2025/11/17 14:46:29 by iel-asef         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,7 +85,9 @@ int	parse_file(char *filename, t_config *config)
         if (view && *view)
             parse_identifier(config, view);
         free(line);
+
     }
     close(fd);
     return (0);
+
 }

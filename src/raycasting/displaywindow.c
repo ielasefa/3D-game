@@ -271,7 +271,7 @@ static void destroy_images(t_game *game)
     }
 }
 
-static void cleanup_and_exit(t_game *game)
+void cleanup_and_exit(t_game *game)
 {
     destroy_images(game);
 
@@ -384,6 +384,7 @@ void free_config(t_config *config)
     free(config->we_tex);
     free(config->ea_tex);
     free(config->door_tex);
+    printf("---------------\n");
 
     config->map_w = 0;
     config->map_h = 0;

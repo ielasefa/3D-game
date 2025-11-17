@@ -6,7 +6,7 @@
 /*   By: iel-asef <iel-asef@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/08 11:49:59 by iel-asef          #+#    #+#             */
-/*   Updated: 2025/11/16 15:39:13 by iel-asef         ###   ########.fr       */
+/*   Updated: 2025/11/17 14:26:15 by iel-asef         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -223,5 +223,6 @@ int get_height(char **map);
 void free_config(t_config *config);
 char **duplicate_map(char **map);
 t_door *find_door(t_doors *doors, int x, int y);
+void cleanup_and_exit(t_game *game);
 
 #endif

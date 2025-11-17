@@ -6,7 +6,7 @@
 /*   By: iel-asef <iel-asef@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/10 20:50:45 by iel-asef          #+#    #+#             */
-/*   Updated: 2025/11/10 14:16:08 by iel-asef         ###   ########.fr       */
+/*   Updated: 2025/11/17 14:50:57 by iel-asef         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,6 +107,7 @@ void validate_map(t_config *config)
         print_error(ERR_INVALID_MAP);
 
     i = 0;
+
     while (config->map[i])
     {
         j = 0;
@@ -118,10 +119,8 @@ void validate_map(t_config *config)
         }
         i++;
     }
-
     config->map_h = get_height(config->map);
     config->map_w = get_max_width(config->map);
-
     find_player(config);
     ensure_closed(config);
 }
