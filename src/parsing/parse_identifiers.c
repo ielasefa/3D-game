@@ -6,11 +6,25 @@
 /*   By: iel-asef <iel-asef@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/10 20:12:21 by iel-asef          #+#    #+#             */
-/*   Updated: 2025/11/20 23:02:39 by iel-asef         ###   ########.fr       */
+/*   Updated: 2025/11/20 23:52:12 by iel-asef         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/cub.h"
+
+void parser_abort(t_config *cfg, int code)
+{
+    free_config(cfg);
+    print_error(code);
+}
+
+static void parser_abort_with_path(t_config *cfg, int code, char *path)
+{
+    free_config(cfg);
+    print_error_path(code, path);
+    free(path);
+    exit(1);
+}
 
 static int has_double_comma(const char *str)
 {
@@ -69,31 +83,22 @@ static void set_texture_or_die(t_config *cfg, char **dst, const char *raw)
     char *path;
     if (*dst)
     {
-        print_error(ERR_INVALID_PATH);
-        print_error(ERR_INVALID_PATH);
-        exit(1);
+        parser_abort(cfg, ERR_INVALID_PATH);
     }
     path = ft_strtrim(raw, " \t\r\n");
     if (!path || *path == '\0')
     {
         free(path);
-        print_error(ERR_INVALID_PATH);
-        free_config(cfg);
-        exit(1);
+        parser_abort(cfg, ERR_INVALID_PATH);
     }
     if (!ends_with_xpm(path))
     {
         free(path);
-        print_error(ERR_INVALID_EXT);
-        free_config(cfg);
-        exit(1);
+        parser_abort(cfg, ERR_INVALID_EXT);
     }
     if (!file_readable(path))
     {
-        print_error_path(ERR_INVALID_PATH, path);
-        free(path);
-        free_config(cfg);
-        exit(1);
+        parser_abort_with_path(cfg, ERR_INVALID_PATH, path);
     }
     *dst = path;
 }
@@ -209,19 +214,13 @@ void	parse_identifier(t_config *cfg, char *line)
     if (s[0] == 'F' && is_space((unsigned char)s[1]))
     {
         if (parse_rgb(cfg->floor, (char *)skip_id_and_spaces(s, 1)))
-        {
-            print_error(ERR_INVALID_RGB);
-            free_config(cfg);
-        }
+            parser_abort(cfg, ERR_INVALID_RGB);
         return;
     }
     if (s[0] == 'C' && is_space((unsigned char)s[1]))
     {
         if (parse_rgb(cfg->ceil, (char *)skip_id_and_spaces(s, 1)))
-        {
-            print_error(ERR_INVALID_RGB);
-            free_config(cfg);
-        }
+            parser_abort(cfg, ERR_INVALID_RGB);
         return;
     }
 
@@ -233,6 +232,6 @@ void	parse_identifier(t_config *cfg, char *line)
             cfg->map_w = ft_strlen(line);
     }
     else if (line[0] != '\0')
-        print_error(ERR_UNKNOWN);
+        parser_abort(cfg, ERR_UNKNOWN);
 }
 

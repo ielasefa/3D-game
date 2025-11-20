@@ -6,7 +6,7 @@
 /*   By: iel-asef <iel-asef@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/10 20:50:45 by iel-asef          #+#    #+#             */
-/*   Updated: 2025/11/17 14:50:57 by iel-asef         ###   ########.fr       */
+/*   Updated: 2025/11/20 23:53:59 by iel-asef         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,7 +90,10 @@ void ensure_closed(t_config *cfg)
                     char_at(cfg, i + 1, j) == ' ' ||
                     char_at(cfg, i, j - 1) == ' ' ||
                     char_at(cfg, i, j + 1) == ' ')
-                    print_error(ERR_INVALID_MAP);
+                    {
+                        free_config(cfg);
+                        print_error(ERR_INVALID_MAP);
+                    }
             }
             j++;
         }
@@ -114,7 +117,10 @@ void validate_map(t_config *config)
         while (config->map[i][j])
         {
             if (!is_valid_map_char(config->map[i][j]))
+            {
+                free_config(config);
                 print_error(ERR_INVALID_MAP);
+            }
             j++;
         }
         i++;

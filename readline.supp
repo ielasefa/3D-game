@@ -7,3 +7,11 @@
    fun:XOpenDisplay
    fun:mlx_init
 }
+{
+   gnl_static_storage
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   ...
+   fun:get_next_line
+}

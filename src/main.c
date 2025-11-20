@@ -6,7 +6,7 @@
 /*   By: iel-asef <iel-asef@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/08 11:50:05 by iel-asef          #+#    #+#             */
-/*   Updated: 2025/11/20 22:09:19 by iel-asef         ###   ########.fr       */
+/*   Updated: 2025/11/20 23:11:55 by iel-asef         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@ static void	init_config(t_config *config)
     config->ea_tex = NULL;
     config->door_tex = NULL;
     config->hand_texture = NULL;
+    config->original_map = NULL;
     config->floor[0] = -1;
     config->floor[1] = -1;
     config->floor[2] = -1;
