@@ -6,7 +6,7 @@
 /*   By: iel-asef <iel-asef@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/08 11:50:05 by iel-asef          #+#    #+#             */
-/*   Updated: 2025/11/19 11:06:08 by iel-asef         ###   ########.fr       */
+/*   Updated: 2025/11/20 22:09:19 by iel-asef         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,9 +48,13 @@ int	main(int ac, char **av)
         return (1);
     init_config(&config);
     if (parse_file(av[1], &config))
+    {
+        free_config(&config);
         return (1);
+    }
     config.original_map = duplicate_map(config.map);
     validate_map(&config);
     creat_window(&game,&config);
+    free_config(&config);
     return (0);
 }

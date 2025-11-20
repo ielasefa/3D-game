@@ -6,7 +6,7 @@
 /*   By: iel-asef <iel-asef@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/23 09:02:16 by ahabibi-          #+#    #+#             */
-/*   Updated: 2025/11/19 11:03:59 by iel-asef         ###   ########.fr       */
+/*   Updated: 2025/11/20 22:57:34 by iel-asef         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -116,11 +116,7 @@ int key_press(int keycode, t_game *game)
     else if (keycode == 65363) //limen
         rotate_player(game, 1);
     else if (keycode == 65307) // ecape
-    {
-        mlx_destroy_window(game->mlx, game->window);
-        exit(0);
-    }
-
+        cleanup_and_exit(game);
     update_display(game, config);
     return (0);
 }

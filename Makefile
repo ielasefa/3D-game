@@ -4,7 +4,7 @@ CC := cc
 
 CFLAGS :=  -I./minilibx-linux -I./includes -I./gnl
 
-LIBXFLAGS := -L./minilibx-linux -lmlx -lXext -lX11 -lm
+LIBXFLAGS := -L./minilibx-linux -lmlx -lXext -lX11 -lm -g3
 
 libft 	:= libft/ft_atoi.c libft/ft_putendl_fd.c libft/ft_strcmp.c libft/ft_strrchr.c \
 		   libft/ft_strjoin.c libft/ft_putchar_fd.c libft/ft_putstr_fd.c \
@@ -18,7 +18,8 @@ main 	:= src/main.c
 
 gnl     := gnl/get_next_line_utils.c gnl/get_next_line.c
 
-RAYCASTING := src/raycasting/raycasting.c src/raycasting/move_player.c src/raycasting/initialisation.c
+RAYCASTING := src/raycasting/raycasting.c src/raycasting/move_player.c src/raycasting/initialisation.c \
+			   src/raycasting/cleanup.c
 
 SRC    := $(srcode) $(RAYCASTING) $(main) $(libft) $(gnl) 
 

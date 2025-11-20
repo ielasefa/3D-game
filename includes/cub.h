@@ -445,6 +445,7 @@ void	validate_map(t_config *config);
 void	free_config(t_config *config);
 void	free_split_safe(char **arr);
 char	**duplicate_map(char **map);
+void    cleanup_and_exit(t_game *game);
 
 /* Libft Utils (if not in libft.h) */
 int		ft_isdigit(int c);

@@ -6,7 +6,7 @@
 /*   By: iel-asef <iel-asef@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/10 20:12:21 by iel-asef          #+#    #+#             */
-/*   Updated: 2025/11/19 10:52:32 by iel-asef         ###   ########.fr       */
+/*   Updated: 2025/11/20 23:02:39 by iel-asef         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,7 +64,7 @@ static int file_readable(const char *path)
     return 1;
 }
 
-static void set_texture_or_die(char **dst, const char *raw)
+static void set_texture_or_die(t_config *cfg, char **dst, const char *raw)
 {
     char *path;
     if (*dst)
@@ -78,18 +78,21 @@ static void set_texture_or_die(char **dst, const char *raw)
     {
         free(path);
         print_error(ERR_INVALID_PATH);
+        free_config(cfg);
         exit(1);
     }
     if (!ends_with_xpm(path))
     {
         free(path);
         print_error(ERR_INVALID_EXT);
+        free_config(cfg);
         exit(1);
     }
     if (!file_readable(path))
     {
         print_error_path(ERR_INVALID_PATH, path);
         free(path);
+        free_config(cfg);
         exit(1);
     }
     *dst = path;
@@ -116,6 +119,7 @@ void    free_config(t_config *cfg)
     free(cfg->we_tex);
     free(cfg->ea_tex);
     free(cfg->door_tex);
+
     if (cfg->original_map)
     {
         i = 0;
@@ -192,15 +196,15 @@ void	parse_identifier(t_config *cfg, char *line)
     const char *s = line;
 
     if (!ft_strncmp(s, "NO", 2) && is_space((unsigned char)s[2]))
-        return (set_texture_or_die(&cfg->no_tex, skip_id_and_spaces(s, 2)), (void)0);
+        return (set_texture_or_die(cfg, &cfg->no_tex, skip_id_and_spaces(s, 2)), (void)0);
     if(!ft_strncmp(s, "SO", 2) && is_space((unsigned char)s[2]))
-        return (set_texture_or_die(&cfg->so_tex, skip_id_and_spaces(s, 2)), (void)0);
+        return (set_texture_or_die(cfg, &cfg->so_tex, skip_id_and_spaces(s, 2)), (void)0);
     if (!ft_strncmp(s, "WE", 2) && is_space((unsigned char)s[2]))
-        return (set_texture_or_die(&cfg->we_tex, skip_id_and_spaces(s, 2)), (void)0);
+        return (set_texture_or_die(cfg, &cfg->we_tex, skip_id_and_spaces(s, 2)), (void)0);
     if (!ft_strncmp(s, "EA", 2) && is_space((unsigned char)s[2]))
-        return (set_texture_or_die(&cfg->ea_tex, skip_id_and_spaces(s, 2)), (void)0);
+        return (set_texture_or_die(cfg, &cfg->ea_tex, skip_id_and_spaces(s, 2)), (void)0);
     if (!ft_strncmp(s, "DO", 2) && is_space((unsigned char)s[2]))
-        return (set_texture_or_die(&cfg->door_tex, skip_id_and_spaces(s, 2)), (void)0);
+        return (set_texture_or_die(cfg, &cfg->door_tex, skip_id_and_spaces(s, 2)), (void)0);
 
     if (s[0] == 'F' && is_space((unsigned char)s[1]))
     {
