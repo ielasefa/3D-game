@@ -6,7 +6,7 @@
 /*   By: iel-asef <iel-asef@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/10 20:12:21 by iel-asef          #+#    #+#             */
-/*   Updated: 2025/11/20 23:52:12 by iel-asef         ###   ########.fr       */
+/*   Updated: 2025/11/21 02:47:02 by iel-asef         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,13 +14,16 @@
 
 void parser_abort(t_config *cfg, int code)
 {
+    gnl_cleanup();
     free_config(cfg);
     print_error(code);
+    exit(1);
 }
 
 static void parser_abort_with_path(t_config *cfg, int code, char *path)
 {
-    free_config(cfg);
+    gnl_cleanup();     
+    free_config(cfg);  
     print_error_path(code, path);
     free(path);
     exit(1);

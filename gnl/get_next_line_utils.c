@@ -49,8 +49,7 @@ char	*ft_strchr(const char *s, int c)
 char	*ft_strjoin_gnl(char *s1, char *s2)
 {
 	char	*dst;
-
-	int i, (j);
+	int		i, j;
 	if (!s1)
 		return (ft_strdup(s2));
 	if (!s2)

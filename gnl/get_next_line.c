@@ -6,7 +6,7 @@
 /*   By: iel-asef <iel-asef@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/18 17:17:27 by iel-asef          #+#    #+#             */
-/*   Updated: 2025/11/20 23:39:23 by iel-asef         ###   ########.fr       */
+/*   Updated: 2025/11/21 03:22:56 by iel-asef         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,6 +102,17 @@ char	*get_next_line(int fd)
 	static char	*storage;
 	char		*line;
 
+	// Special zcleanup call
+	if (fd == -1)
+	{
+		if (storage)
+		{
+			free(storage);
+			storage = NULL;
+		}
+		return (NULL);
+	}
+
 	storage = ft_read(fd, storage);
 	if (!storage)
 		return (free(storage), storage = NULL, NULL);
@@ -110,4 +121,9 @@ char	*get_next_line(int fd)
 		return (free(storage), storage = NULL, NULL);
 	storage = clean_storage(storage);
 	return (line);
+}
+
+void	gnl_cleanup(void)
+{
+	get_next_line(-1);
 }

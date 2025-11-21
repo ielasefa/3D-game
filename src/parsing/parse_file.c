@@ -6,7 +6,7 @@
 /*   By: iel-asef <iel-asef@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/08 11:50:13 by iel-asef          #+#    #+#             */
-/*   Updated: 2025/11/20 23:45:11 by iel-asef         ###   ########.fr       */
+/*   Updated: 2025/11/21 02:52:12 by iel-asef         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,11 +60,43 @@ static char *trim_line_inplace(char *line)
     return start;
 }
 
-int	parse_file(char *filename, t_config *config)
+// int	parse_file(char *filename, t_config *config)
+// {
+//     int		fd;
+//     char	*line;
+//     char	*view;
+
+//     fd = open(filename, O_RDONLY);
+//     if (fd < 0)
+//         return (print_error(ERR_INVALID_PATH), 1);
+
+//     config->map = NULL;
+//     config->map_h = 0;
+//     config->map_w = 0;
+
+//     while ((line = get_next_line(fd)))
+//     {
+//         if (is_empty_line(line))
+//         {
+//             free(line);
+//             continue;
+//         }
+//         view = trim_line_inplace(line);
+//         if (view && *view)
+//             parse_identifier(config, view);
+//         free(line);
+
+//     }
+//     // gnl_cleanup();
+//     close(fd);
+//     return (0);
+
+// }
+int parse_file(char *filename, t_config *config)
 {
-    int		fd;
-    char	*line;
-    char	*view;
+    int     fd;
+    char    *line;
+    char    *view;
 
     fd = open(filename, O_RDONLY);
     if (fd < 0)
@@ -74,20 +106,16 @@ int	parse_file(char *filename, t_config *config)
     config->map_h = 0;
     config->map_w = 0;
 
-    while ((line = get_next_line(fd)))
+    while ((line = get_next_line(fd)) != NULL)
     {
-        if (is_empty_line(line))
-        {
-            free(line);
-            continue;
-        }
         view = trim_line_inplace(line);
         if (view && *view)
             parse_identifier(config, view);
-        free(line);
-
+        free(line);  // free each line after use
     }
-    close(fd);
-    return (0);
 
+    close(fd);
+    // gnl_cleanup(); // clear any leftover static buffer in get_next_line
+    return 0;
 }
+
