@@ -450,5 +450,6 @@ void    cleanup_and_exit(t_game *game);
 
 /* Libft Utils (if not in libft.h) */
 int		ft_isdigit(int c);
+void gnl_cleanup1(t_config *config);
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: iel-asef <iel-asef@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/08 11:50:13 by iel-asef          #+#    #+#             */
-/*   Updated: 2025/11/21 02:52:12 by iel-asef         ###   ########.fr       */
+/*   Updated: 2025/11/22 23:06:56 by iel-asef         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,9 +59,6 @@ static char *trim_line_inplace(char *line)
 
     return start;
 }
-
-
-// static char *g_gnl_last_line = NULL;
 
 void gnl_set_last_line(char *line, t_config *config)
 {

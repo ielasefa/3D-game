@@ -6,7 +6,7 @@
 /*   By: iel-asef <iel-asef@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/10 20:12:21 by iel-asef          #+#    #+#             */
-/*   Updated: 2025/11/21 02:47:02 by iel-asef         ###   ########.fr       */
+/*   Updated: 2025/11/22 23:09:02 by iel-asef         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,6 @@ void parser_abort(t_config *cfg, int code)
 
 static void parser_abort_with_path(t_config *cfg, int code, char *path)
 {
-    // printf("dezt mn hnaaaaaaaaaaaaaaaaaaaaaaaaaaa\n");
     gnl_cleanup1(cfg);     
     free_config(cfg);  
     print_error_path(code, path);
@@ -99,13 +98,12 @@ static void set_texture_or_die(t_config *cfg, char **dst, const char *raw)
     }
     if (!ends_with_xpm(path))
     {
-            gnl_cleanup1(cfg);
+        gnl_cleanup1(cfg);
         free(path);
         parser_abort(cfg, ERR_INVALID_EXT);
     }
     if (!file_readable(path))
     {
-            // printf("dezt mn hnaaaaaaaaaaaaaaaaaaaaaaaaaaa\n");
         gnl_cleanup1(cfg);
         parser_abort_with_path(cfg, ERR_INVALID_PATH, path);
     }
@@ -222,12 +220,16 @@ void	parse_identifier(t_config *cfg, char *line)
 
     if (s[0] == 'F' && is_space((unsigned char)s[1]))
     {
+        if (cfg->floor[0] != -1 || cfg->floor[1] != -1 || cfg->floor[2] != -1)
+            parser_abort(cfg, ERR_INVALID_RGB);
         if (parse_rgb(cfg->floor, (char *)skip_id_and_spaces(s, 1)))
             parser_abort(cfg, ERR_INVALID_RGB);
         return (void)1;
     }
     if (s[0] == 'C' && is_space((unsigned char)s[1]))
     {
+        if (cfg->ceil[0] != -1 || cfg->ceil[1] != -1 || cfg->ceil[2] != -1)
+            parser_abort(cfg, ERR_INVALID_RGB);
         if (parse_rgb(cfg->ceil, (char *)skip_id_and_spaces(s, 1)))
             parser_abort(cfg, ERR_INVALID_RGB);
         return (void)1;
