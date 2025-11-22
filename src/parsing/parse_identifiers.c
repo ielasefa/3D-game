@@ -14,7 +14,7 @@
 
 void parser_abort(t_config *cfg, int code)
 {
-    gnl_cleanup();
+    gnl_cleanup1(cfg);
     free_config(cfg);
     print_error(code);
     exit(1);
@@ -23,7 +23,7 @@ void parser_abort(t_config *cfg, int code)
 static void parser_abort_with_path(t_config *cfg, int code, char *path)
 {
     // printf("dezt mn hnaaaaaaaaaaaaaaaaaaaaaaaaaaa\n");
-    gnl_cleanup();     
+    gnl_cleanup1(cfg);     
     free_config(cfg);  
     print_error_path(code, path);
     free(path);
@@ -87,26 +87,26 @@ static void set_texture_or_die(t_config *cfg, char **dst, const char *raw)
     char *path;
     if (*dst)
     {
-        gnl_cleanup();  
+        gnl_cleanup1(cfg);  
         parser_abort(cfg, ERR_INVALID_PATH);
     }
     path = ft_strtrim(raw, " \t\r\n");
     if (!path || *path == '\0')
     {
-        gnl_cleanup();
+        gnl_cleanup1(cfg);
         free(path);
         parser_abort(cfg, ERR_INVALID_PATH);
     }
     if (!ends_with_xpm(path))
     {
-            gnl_cleanup();
+            gnl_cleanup1(cfg);
         free(path);
         parser_abort(cfg, ERR_INVALID_EXT);
     }
     if (!file_readable(path))
     {
             // printf("dezt mn hnaaaaaaaaaaaaaaaaaaaaaaaaaaa\n");
-        gnl_cleanup();
+        gnl_cleanup1(cfg);
         parser_abort_with_path(cfg, ERR_INVALID_PATH, path);
     }
     *dst = path;

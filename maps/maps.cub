@@ -2,7 +2,7 @@ NO textures/wall_Gry.xpm
 SO textures/wall_Huf.xpm
 WE textures/wall_Sly.xpm
 EA textures/wall_Rev.xpm
-DO textures/DOOR.xpm
+DO texturesDOOR.xpm
 
 C 135,206,235
 F 16,16,16

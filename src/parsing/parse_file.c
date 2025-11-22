@@ -61,19 +61,19 @@ static char *trim_line_inplace(char *line)
 }
 
 
-static char *g_gnl_last_line = NULL;
+// static char *g_gnl_last_line = NULL;
 
-void gnl_set_last_line(char *line)
+void gnl_set_last_line(char *line, t_config *config)
 {
-    g_gnl_last_line = line;
+    config->g_gnl_last_line = line;
 }
 
-void gnl_cleanup(void)
+void gnl_cleanup1(t_config *config)
 {
-    if (g_gnl_last_line)
+    if ( config->g_gnl_last_line)
     {
-        free(g_gnl_last_line);
-        g_gnl_last_line = NULL;
+        free( config->g_gnl_last_line);
+         config->g_gnl_last_line = NULL;
     }
     get_next_line(-1);
 }
@@ -94,16 +94,16 @@ int parse_file(char *filename, t_config *config)
 
     while ((line = get_next_line(fd)) != NULL)
     {
-        gnl_set_last_line(line);
+        gnl_set_last_line(line,config);
 
         view = trim_line_inplace(line);
         if (view && *view)
             parse_identifier(config, view);
 
-        gnl_set_last_line(NULL);
+        gnl_set_last_line(NULL,config);
         free(line);
     }
-    gnl_cleanup();
+    gnl_cleanup1(config);
 
     close(fd);
     return 0;

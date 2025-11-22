@@ -288,6 +288,7 @@ typedef struct s_config
 	char	*ea_tex;
 	char	*door_tex;
 	char	*hand_texture;
+	char	*g_gnl_last_line;
 	int		floor[3];
 	int		ceil[3];
 	char	**map;

@@ -14,7 +14,7 @@
 
 static void	put_error(char *msg)
 {
-    gnl_cleanup();
+    // gnl_cleanup1();
     ft_putendl_fd("Error", 2);
     ft_putendl_fd(msg, 2);
     exit(1);
