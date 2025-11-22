@@ -11,7 +11,7 @@
 /* ************************************************************************** */
 
 #include "get_next_line.h"
-
+#include <stdio.h>
 char	*ft_read(int fd, char *storage)
 {
 	char		*buffer;
@@ -123,7 +123,3 @@ char	*get_next_line(int fd)
 	return (line);
 }
 
-void	gnl_cleanup(void)
-{
-	get_next_line(-1);
-}

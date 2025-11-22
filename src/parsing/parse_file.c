@@ -60,38 +60,24 @@ static char *trim_line_inplace(char *line)
     return start;
 }
 
-// int	parse_file(char *filename, t_config *config)
-// {
-//     int		fd;
-//     char	*line;
-//     char	*view;
 
-//     fd = open(filename, O_RDONLY);
-//     if (fd < 0)
-//         return (print_error(ERR_INVALID_PATH), 1);
+static char *g_gnl_last_line = NULL;
 
-//     config->map = NULL;
-//     config->map_h = 0;
-//     config->map_w = 0;
+void gnl_set_last_line(char *line)
+{
+    g_gnl_last_line = line;
+}
 
-//     while ((line = get_next_line(fd)))
-//     {
-//         if (is_empty_line(line))
-//         {
-//             free(line);
-//             continue;
-//         }
-//         view = trim_line_inplace(line);
-//         if (view && *view)
-//             parse_identifier(config, view);
-//         free(line);
+void gnl_cleanup(void)
+{
+    if (g_gnl_last_line)
+    {
+        free(g_gnl_last_line);
+        g_gnl_last_line = NULL;
+    }
+    get_next_line(-1);
+}
 
-//     }
-//     // gnl_cleanup();
-//     close(fd);
-//     return (0);
-
-// }
 int parse_file(char *filename, t_config *config)
 {
     int     fd;
@@ -108,14 +94,18 @@ int parse_file(char *filename, t_config *config)
 
     while ((line = get_next_line(fd)) != NULL)
     {
+        gnl_set_last_line(line);
+
         view = trim_line_inplace(line);
         if (view && *view)
             parse_identifier(config, view);
-        free(line);  // free each line after use
+
+        gnl_set_last_line(NULL);
+        free(line);
     }
+    gnl_cleanup();
 
     close(fd);
-    // gnl_cleanup(); // clear any leftover static buffer in get_next_line
     return 0;
 }
 

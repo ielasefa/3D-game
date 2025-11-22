@@ -22,6 +22,7 @@ void parser_abort(t_config *cfg, int code)
 
 static void parser_abort_with_path(t_config *cfg, int code, char *path)
 {
+    // printf("dezt mn hnaaaaaaaaaaaaaaaaaaaaaaaaaaa\n");
     gnl_cleanup();     
     free_config(cfg);  
     print_error_path(code, path);
@@ -86,21 +87,26 @@ static void set_texture_or_die(t_config *cfg, char **dst, const char *raw)
     char *path;
     if (*dst)
     {
+        gnl_cleanup();  
         parser_abort(cfg, ERR_INVALID_PATH);
     }
     path = ft_strtrim(raw, " \t\r\n");
     if (!path || *path == '\0')
     {
+        gnl_cleanup();
         free(path);
         parser_abort(cfg, ERR_INVALID_PATH);
     }
     if (!ends_with_xpm(path))
     {
+            gnl_cleanup();
         free(path);
         parser_abort(cfg, ERR_INVALID_EXT);
     }
     if (!file_readable(path))
     {
+            // printf("dezt mn hnaaaaaaaaaaaaaaaaaaaaaaaaaaa\n");
+        gnl_cleanup();
         parser_abort_with_path(cfg, ERR_INVALID_PATH, path);
     }
     *dst = path;
@@ -218,13 +224,13 @@ void	parse_identifier(t_config *cfg, char *line)
     {
         if (parse_rgb(cfg->floor, (char *)skip_id_and_spaces(s, 1)))
             parser_abort(cfg, ERR_INVALID_RGB);
-        return;
+        return (void)1;
     }
     if (s[0] == 'C' && is_space((unsigned char)s[1]))
     {
         if (parse_rgb(cfg->ceil, (char *)skip_id_and_spaces(s, 1)))
             parser_abort(cfg, ERR_INVALID_RGB);
-        return;
+        return (void)1;
     }
 
     if (is_map_line(line))
@@ -236,5 +242,6 @@ void	parse_identifier(t_config *cfg, char *line)
     }
     else if (line[0] != '\0')
         parser_abort(cfg, ERR_UNKNOWN);
+    return (void)0;
 }
 
