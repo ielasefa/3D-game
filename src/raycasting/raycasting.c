@@ -417,11 +417,11 @@ void load_textures(t_game *game, t_config *config)
             game->door_texture.addr = mlx_get_data_addr(game->door_texture.img,
                 &game->door_texture.bits_per_pixel, &game->door_texture.line_length,
                 &game->door_texture.endian);
-        /* Informational: print whether door texture loaded (helpful for debugging) */
-        if (game->door_texture.img)
-            printf("[info] loaded door texture: %s\n", config->door_tex);
-        else
-            printf("[warn] failed to load door texture: %s\n", config->door_tex);
+        // /* Informational: print whether door texture loaded (helpful for debugging) */
+        // if (game->door_texture.img)
+        //     printf("[info] loaded door texture: %s\n", config->door_tex);
+        // else
+        //     printf("[warn] failed to load door texture: %s\n", config->door_tex);
     }
 
     load_hand_reload(game);

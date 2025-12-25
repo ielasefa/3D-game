@@ -13,7 +13,7 @@ libft 	:= libft/ft_atoi.c libft/ft_putendl_fd.c libft/ft_strcmp.c libft/ft_strrc
 
 srcode  := src/parsing/parse_file.c  src/parsing/parse_identifiers.c  src/parsing/parse_map.c \
 			src/parsing/parse_utils.c src/parsing/parse_utils2.c src/parsing/print_error.c src/raycasting/mouse.c \
-			src/parsing/free.c	
+			src/parsing/free.c	src/parsing/parse_identifiers2.c src/parsing/pars_utils1.c
 main 	:= src/main.c
 
 gnl     := gnl/get_next_line_utils.c gnl/get_next_line.c

@@ -6,41 +6,13 @@
 /*   By: iel-asef <iel-asef@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/10 20:12:21 by iel-asef          #+#    #+#             */
-/*   Updated: 2025/12/25 02:44:44 by iel-asef         ###   ########.fr       */
+/*   Updated: 2025/12/25 04:22:14 by iel-asef         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/cub.h"
 
-static int	has_double_comma(const char *str)
-{
-	int	i;
-
-	i = 0;
-	while (str[i] && str[i + 1])
-	{
-		if (str[i] == ',' && str[i + 1] == ',')
-			return (1);
-		i++;
-	}
-	return (0);
-}
-
-static int	is_valid_number(char *str)
-{
-	int	i;
-
-	i = 0;
-	while (str[i])
-	{
-		if (str[i] != ' ' && str[i] != '\t' && !ft_isdigit(str[i]))
-			return (0);
-		i++;
-	}
-	return (1);
-}
-
-static int	file_readable(const char *path)
+int	file_readable(const char *path)
 {
 	int	fd;
 
@@ -51,23 +23,15 @@ static int	file_readable(const char *path)
 	return (1);
 }
 
-static void	set_texture_or_die(t_config *cfg, char **dst, const char *raw)
+void	validate_path_or_die(t_config *cfg, char *path, int check_ext)
 {
-	char	*path;
-
-	if (*dst)
-	{
-		gnl_cleanup1(cfg);
-		parser_abort(cfg, ERR_INVALID_PATH);
-	}
-	path = ft_strtrim(raw, " \t\r\n");
 	if (!path || *path == '\0')
 	{
 		gnl_cleanup1(cfg);
 		free(path);
 		parser_abort(cfg, ERR_INVALID_PATH);
 	}
-	if (!ends_with_xpm(path))
+	if (check_ext && !ends_with_xpm(path))
 	{
 		gnl_cleanup1(cfg);
 		free(path);
@@ -78,10 +42,9 @@ static void	set_texture_or_die(t_config *cfg, char **dst, const char *raw)
 		gnl_cleanup1(cfg);
 		parser_abort_with_path(cfg, ERR_INVALID_PATH, path);
 	}
-	*dst = path;
 }
 
-static const char	*skip_id_and_spaces(const char *s, int idlen)
+const char	*skip_id_and_spaces(const char *s, int idlen)
 {
 	s += idlen;
 	while (*s && is_space((unsigned char)*s))
@@ -89,124 +52,48 @@ static const char	*skip_id_and_spaces(const char *s, int idlen)
 	return (s);
 }
 
-void	free_config(t_config *cfg)
+int	validate_rgb_component(const char *s, int *value, char **split)
 {
-	int	i;
+	char	*trimmed;
 
-	if (!cfg)
-		return ;
-	free(cfg->no_tex);
-	free(cfg->so_tex);
-	free(cfg->we_tex);
-	free(cfg->ea_tex);
-	free(cfg->door_tex);
-	if (cfg->original_map)
+	trimmed = ft_strtrim(s, " \t");
+	if (!trimmed || !*trimmed || !is_valid_number(trimmed))
 	{
-		i = 0;
-		while (cfg->original_map[i])
-		{
-			free(cfg->original_map[i]);
-			i++;
-		}
-		free(cfg->original_map);
+		ft_free_split(split);
+		free(trimmed);
+		return (1);
 	}
-	if (cfg->map)
+	*value = ft_atoi(trimmed);
+	free(trimmed);
+	if (*value < 0 || *value > 255)
 	{
-		i = 0;
-		while (i < cfg->map_h)
-		{
-			free(cfg->map[i]);
-			i++;
-		}
-		free(cfg->map);
+		ft_free_split(split);
+		return (1);
 	}
+	return (0);
 }
+
 int	parse_rgb(int color[3], char *s)
 {
 	char	**split;
 	int		i;
-	char	*trimmed;
 
 	if (!s)
 		return (1);
 	while (*s && (*s == ' ' || *s == '\t'))
 		s++;
-	if (*s == ',' || s[ft_strlen(s) - 1] == ',')
-		return (1);
-	if (has_double_comma(s))
+	if (*s == ',' || s[ft_strlen(s) - 1] == ',' || has_double_comma(s))
 		return (1);
 	split = ft_split(s, ',');
 	if (!split || ft_splitlen(split) != 3)
-	{
-		ft_free_split(split);
-		return (1);
-	}
+		return (ft_free_split(split), 1);
 	i = 0;
 	while (i < 3)
 	{
-		trimmed = ft_strtrim(split[i], " \t");
-		if (!trimmed || !*trimmed || !is_valid_number(trimmed))
-		{
-			ft_free_split(split);
-			free(trimmed);
+		if (validate_rgb_component(split[i], &color[i], split))
 			return (1);
-		}
-		color[i] = ft_atoi(trimmed);
-		free(trimmed);
-		if (color[i] < 0 || color[i] > 255)
-		{
-			ft_free_split(split);
-			return (1);
-		}
 		i++;
 	}
 	ft_free_split(split);
 	return (0);
-}
-
-void	parse_identifier(t_config *cfg, char *line)
-{
-	const char	*s = line;
-
-	if (!ft_strncmp(s, "NO", 2) && is_space((unsigned char)s[2]))
-		return (set_texture_or_die(cfg, &cfg->no_tex, skip_id_and_spaces(s, 2)),
-			(void)0);
-	if (!ft_strncmp(s, "SO", 2) && is_space((unsigned char)s[2]))
-		return (set_texture_or_die(cfg, &cfg->so_tex, skip_id_and_spaces(s, 2)),
-			(void)0);
-	if (!ft_strncmp(s, "WE", 2) && is_space((unsigned char)s[2]))
-		return (set_texture_or_die(cfg, &cfg->we_tex, skip_id_and_spaces(s, 2)),
-			(void)0);
-	if (!ft_strncmp(s, "EA", 2) && is_space((unsigned char)s[2]))
-		return (set_texture_or_die(cfg, &cfg->ea_tex, skip_id_and_spaces(s, 2)),
-			(void)0);
-	if (!ft_strncmp(s, "DO", 2) && is_space((unsigned char)s[2]))
-		return (set_texture_or_die(cfg, &cfg->door_tex, skip_id_and_spaces(s,
-					2)), (void)0);
-	if (s[0] == 'F' && is_space((unsigned char)s[1]))
-	{
-		if (cfg->floor[0] != -1 || cfg->floor[1] != -1 || cfg->floor[2] != -1)
-			parser_abort(cfg, ERR_INVALID_RGB);
-		if (parse_rgb(cfg->floor, (char *)skip_id_and_spaces(s, 1)))
-			parser_abort(cfg, ERR_INVALID_RGB);
-		return ((void)1);
-	}
-	if (s[0] == 'C' && is_space((unsigned char)s[1]))
-	{
-		if (cfg->ceil[0] != -1 || cfg->ceil[1] != -1 || cfg->ceil[2] != -1)
-			parser_abort(cfg, ERR_INVALID_RGB);
-		if (parse_rgb(cfg->ceil, (char *)skip_id_and_spaces(s, 1)))
-			parser_abort(cfg, ERR_INVALID_RGB);
-		return ((void)1);
-	}
-	if (is_map_line(line))
-	{
-		cfg->map = add_line_to_array(cfg->map, line);
-		cfg->map_h++;
-		if ((int)ft_strlen(line) > cfg->map_w)
-			cfg->map_w = ft_strlen(line);
-	}
-	else if (line[0] != '\0')
-		parser_abort(cfg, ERR_UNKNOWN);
-	return ((void)0);
 }

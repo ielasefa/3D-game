@@ -6,7 +6,7 @@
 /*   By: iel-asef <iel-asef@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/08 11:49:59 by iel-asef          #+#    #+#             */
-/*   Updated: 2025/12/25 03:10:59 by iel-asef         ###   ########.fr       */
+/*   Updated: 2025/12/25 04:23:29 by iel-asef         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -267,5 +267,10 @@ void	parser_abort_with_path(t_config *cfg, int code, char *path);
 void	scan_row_for_player(t_config *cfg, int i, int *count);
 void	check_cell(t_config *cfg, int i, int j);
 char	char_at(t_config *cfg, int i, int j);
-
+void	free_partial_dup(char **dup, int i);
+int	has_double_comma(const char *str);
+int	is_valid_number(char *str);
+const char	*skip_id_and_spaces(const char *s, int idlen);
+void	validate_path_or_die(t_config *cfg, char *path, int check_ext);
+void	set_texture_or_die(t_config *cfg, char **dst, const char *raw);
 #endif
