@@ -9,11 +9,11 @@ LIBXFLAGS := -L./minilibx-linux -lmlx -lXext -lX11 -lm -g3
 libft 	:= libft/ft_atoi.c libft/ft_putendl_fd.c libft/ft_strcmp.c libft/ft_strrchr.c \
 		   libft/ft_strjoin.c libft/ft_putchar_fd.c libft/ft_putstr_fd.c \
 		   libft/ft_split.c libft/ft_strncmp.c libft/ft_strtrim.c \
-		   libft/ft_splitlen.c libft/ft_free_split.c
+		   libft/ft_splitlen.c libft/ft_free_split.c src/parsing/parse_file1.c
 
 srcode  := src/parsing/parse_file.c  src/parsing/parse_identifiers.c  src/parsing/parse_map.c \
-			src/parsing/parse_utils.c src/parsing/parse_utils2.c src/parsing/print_error.c src/raycasting/mouse.c
-
+			src/parsing/parse_utils.c src/parsing/parse_utils2.c src/parsing/print_error.c src/raycasting/mouse.c \
+			src/parsing/free.c	
 main 	:= src/main.c
 
 gnl     := gnl/get_next_line_utils.c gnl/get_next_line.c

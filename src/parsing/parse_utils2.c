@@ -12,40 +12,42 @@
 
 #include "../../includes/cub.h"
 
-int is_map_line(char *line)
+int	is_map_line(char *line)
 {
-    int i = 0;
+	int	i;
 
-    while (line[i])
-    {
-        if (!is_valid_map_char(line[i]))
-            return (0);
-        i++;
-    }
-    return (1);
+	i = 0;
+	while (line[i])
+	{
+		if (!is_valid_map_char(line[i]))
+			return (0);
+		i++;
+	}
+	return (1);
 }
 
-
-int is_valid_map_char(char c)
+int	is_valid_map_char(char c)
 {
-    return (c == '0' || c == '1' || c == 'N' || c == 'S' ||
-            c == 'E' || c == 'W' || c == ' ' || c == 'D');
+	return (c == '0' || c == '1' || c == 'N' || c == 'S' || c == 'E' || c == 'W'
+		|| c == ' ' || c == 'D');
 }
 
-int get_height(char **map)
+int	get_height(char **map)
 {
-    int h = 0;
-    while (map && map[h])
-        h++;
-    return h;
+	int	h;
+
+	h = 0;
+	while (map && map[h])
+		h++;
+	return (h);
 }
 
-int ft_isdigit(int c)
+int	ft_isdigit(int c)
 {
-    return (c >= '0' && c <= '9');
+	return (c >= '0' && c <= '9');
 }
 
-int is_player_char(char c)
+int	is_player_char(char c)
 {
-    return (c == 'N' || c == 'S' || c == 'E' || c == 'W');
+	return (c == 'N' || c == 'S' || c == 'E' || c == 'W');
 }
