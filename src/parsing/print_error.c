@@ -6,7 +6,7 @@
 /*   By: iel-asef <iel-asef@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/10 21:05:32 by iel-asef          #+#    #+#             */
-/*   Updated: 2025/11/17 18:34:37 by iel-asef         ###   ########.fr       */
+/*   Updated: 2025/12/25 03:12:14 by iel-asef         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,6 @@
 
 static void	put_error(char *msg)
 {
-	// gnl_cleanup1();
 	ft_putendl_fd("Error", 2);
 	ft_putendl_fd(msg, 2);
 	exit(1);
