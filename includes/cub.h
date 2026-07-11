@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cub.h                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: iel-asef <iel-asef@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ahabibi- <ahabibi-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/08 11:49:59 by iel-asef          #+#    #+#             */
-/*   Updated: 2025/12/25 04:23:29 by iel-asef         ###   ########.fr       */
+/*   Updated: 2026/07/11 11:18:12 by ahabibi-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,7 @@
 # include "get_next_line.h"
 # include "libft.h"
 # include "minilibx-linux/mlx.h"
+
 
 /* ERROR CODES */
 # define ERR_INVALID_PATH    1
@@ -50,7 +51,7 @@
 /* COLORS */
 # define COLOR_CEILING       0x87CEEB  // sky blue
 # define COLOR_FLOOR         0x228B22  // forest green
-# define COLOR_WALL          0xFFD700  // gold
+# define COLOR_WALL          0xFFD700  // GOLD
 # define COLOR_WHITE         0xFFFFFF  // R=255, G=255, B=255
 # define COLOR_PINK          0xFF66B2  // R=255, G=102, B=178
 # define COLOR_BLUE          0x0000FF  // R=0,   G=0,   B=255
